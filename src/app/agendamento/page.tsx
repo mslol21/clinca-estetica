@@ -16,11 +16,10 @@ import {
 } from "lucide-react";
 import { useDatabase } from "@/context/DatabaseContext";
 import { useToast } from "@/components/ui/Toast";
-import { themeConfig } from "@/config/theme-config";
 import confetti from "canvas-confetti";
 
 function AgendamentoContent() {
-  const { procedures, saveAppointment, saveClient, clients, clinicConfig } = useDatabase();
+  const { procedures, saveAppointment, saveClient, clients, clinicConfig, btnRadius, cardStyleClass } = useDatabase();
   const { success, error } = useToast();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -178,21 +177,7 @@ function AgendamentoContent() {
 
   const timeSlots = getAvailableHours(selectedDate);
 
-  // Dynamic border radius for buttons
-  const btnRadius =
-    themeConfig.styles.button === "pill"
-      ? "rounded-full"
-      : themeConfig.styles.button === "rounded"
-      ? "rounded-xl"
-      : "rounded-none";
 
-  // Dynamic style for cards
-  const cardStyleClass =
-    themeConfig.styles.card === "glass"
-      ? "glass-card"
-      : themeConfig.styles.card === "bordered"
-      ? "bg-white dark:bg-stone-900 border border-stone-200/60 dark:border-stone-800/40"
-      : "bg-white dark:bg-stone-900 shadow-xl shadow-stone-500/5 dark:shadow-none border border-transparent";
 
   if (bookingConfirmed && selectedProcedure) {
     return (

@@ -27,7 +27,6 @@ import {
 import { useAuth } from "@/context/AuthContext";
 import { useDatabase } from "@/context/DatabaseContext";
 import { useToast } from "@/components/ui/Toast";
-import { themeConfig } from "@/config/theme-config";
 import {
   BarChart,
   Bar,
@@ -69,6 +68,8 @@ export default function AdminPanel() {
     saveTestimonial,
     deleteTestimonial,
     saveClinicConfig,
+    btnRadius,
+    cardStyleClass,
   } = useDatabase();
   
   const { success, error } = useToast();
@@ -345,21 +346,7 @@ export default function AdminPanel() {
     { id: "configuracoes", name: "Configurações", icon: Settings },
   ];
 
-  // Dynamic button style from themeConfig
-  const btnRadius =
-    themeConfig.styles.button === "pill"
-      ? "rounded-full"
-      : themeConfig.styles.button === "rounded"
-      ? "rounded-xl"
-      : "rounded-none";
 
-  // Dynamic card style from themeConfig
-  const cardStyleClass =
-    themeConfig.styles.card === "glass"
-      ? "glass-card"
-      : themeConfig.styles.card === "bordered"
-      ? "bg-white dark:bg-stone-900 border border-stone-200/60 dark:border-stone-800/40"
-      : "bg-white dark:bg-stone-900 shadow-xl shadow-stone-500/5 dark:shadow-none border border-transparent";
 
   return (
     <div className="min-h-screen bg-stone-100 dark:bg-stone-950 flex flex-col lg:flex-row font-sans text-xs transition-colors">

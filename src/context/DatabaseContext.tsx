@@ -12,6 +12,7 @@ import {
   BlogPost,
   ClinicConfig,
 } from "@/services/mockData";
+import { themeConfig, ThemeConfig } from "@/config/theme-config";
 
 interface DatabaseContextProps {
   procedures: Procedure[];
@@ -22,6 +23,7 @@ interface DatabaseContextProps {
   testimonials: Testimonial[];
   blogPosts: BlogPost[];
   clinicConfig: ClinicConfig;
+  theme: ThemeConfig;
   loading: boolean;
 
   // Actions
@@ -41,6 +43,11 @@ interface DatabaseContextProps {
   saveBlogPost: (item: BlogPost) => void;
   deleteBlogPost: (id: string) => void;
   saveClinicConfig: (item: ClinicConfig) => void;
+  saveTheme: (theme: ThemeConfig) => void;
+
+  // Dynamic Theme Styling Classes
+  btnRadius: string;
+  cardStyleClass: string;
 }
 
 const DatabaseContext = createContext<DatabaseContextProps | undefined>(undefined);
@@ -56,6 +63,7 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [clinicConfig, setClinicConfig] = useState<ClinicConfig | null>(null);
+  const [theme, setThemeState] = useState<ThemeConfig>(themeConfig);
   const [loading, setLoading] = useState(true);
 
   const loadAllData = () => {
@@ -72,10 +80,26 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     loadAllData();
+    // Load persisted theme
+    if (typeof window !== "undefined") {
+      const savedTheme = localStorage.getItem("luxe_clinic_theme_config");
+      if (savedTheme) {
+        try {
+          setThemeState(JSON.parse(savedTheme));
+        } catch (_) {}
+      }
+    }
   }, []);
 
   const refreshData = () => {
     loadAllData();
+  };
+
+  const saveTheme = (newTheme: ThemeConfig) => {
+    setThemeState(newTheme);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("luxe_clinic_theme_config", JSON.stringify(newTheme));
+    }
   };
 
   const wrapAction = <T,>(saveFn: (item: T) => void, reload: boolean = true) => {
@@ -92,6 +116,21 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({
     };
   };
 
+  // Compute theme style helpers reactively
+  const btnRadius =
+    theme.styles.button === "pill"
+      ? "rounded-full"
+      : theme.styles.button === "rounded"
+      ? "rounded-xl"
+      : "rounded-none";
+
+  const cardStyleClass =
+    theme.styles.card === "glass"
+      ? "glass-card"
+      : theme.styles.card === "bordered"
+      ? "bg-white dark:bg-stone-900 border border-stone-200/60 dark:border-stone-800/40"
+      : "bg-white dark:bg-stone-900 shadow-xl shadow-stone-500/5 dark:shadow-none border border-transparent";
+
   return (
     <DatabaseContext.Provider
       value={{
@@ -106,6 +145,8 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({
           name: "Carregando...",
           slogan: "",
           logoText: "",
+          logoImage: "",
+          heroImage: "",
           phone: "",
           whatsapp: "",
           email: "",
@@ -129,6 +170,7 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({
             infraParagraphs: [],
           },
         },
+        theme,
         loading,
         refreshData,
         saveProcedure: wrapAction(dbService.saveProcedure),
@@ -149,11 +191,36 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({
           dbService.saveClinicConfig(config);
           loadAllData();
         },
+        saveTheme,
+        btnRadius,
+        cardStyleClass,
       }}
     >
+      <ThemeStyleInjectorInternal />
       {children}
     </DatabaseContext.Provider>
   );
+};
+
+const ThemeStyleInjectorInternal = () => {
+  const { theme } = useDatabase();
+
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      const root = document.documentElement;
+      root.style.setProperty("--luxe-primary", theme.colors.primary);
+      root.style.setProperty("--luxe-secondary", theme.colors.secondary);
+      root.style.setProperty("--luxe-accent", theme.colors.accent);
+      root.style.setProperty("--luxe-bg-light", theme.colors.backgroundLight);
+      root.style.setProperty("--luxe-bg-dark", theme.colors.backgroundDark);
+      
+      // Update font properties dynamically
+      root.style.setProperty("--luxe-font-heading", theme.fonts.heading);
+      root.style.setProperty("--luxe-font-body", theme.fonts.body);
+    }
+  }, [theme]);
+
+  return null;
 };
 
 export const useDatabase = () => {

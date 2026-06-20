@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Phone, Mail, MapPin, ShieldAlert } from "lucide-react";
-import { clinicConfig } from "@/config/clinic-config";
+import { useDatabase } from "@/context/DatabaseContext";
 
 const Instagram: React.FC<{ size?: number }> = ({ size = 16 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -29,6 +29,7 @@ const Youtube: React.FC<{ size?: number }> = ({ size = 16 }) => (
 
 export const Footer: React.FC = () => {
   const pathname = usePathname();
+  const { clinicConfig } = useDatabase();
 
   // Hide footer on admin routes
   if (pathname?.startsWith("/admin")) return null;

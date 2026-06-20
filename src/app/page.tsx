@@ -16,31 +16,12 @@ import {
 } from "lucide-react";
 import { useDatabase } from "@/context/DatabaseContext";
 import { BeforeAfterSlider } from "@/components/site/BeforeAfterSlider";
-import { clinicConfig } from "@/config/clinic-config";
-import { themeConfig } from "@/config/theme-config";
-
 export default function Home() {
-  const { procedures, testimonials, beforeAfter } = useDatabase();
+  const { clinicConfig, procedures, testimonials, beforeAfter, btnRadius, cardStyleClass } = useDatabase();
   const [activeTab, setActiveTab] = useState<"facial" | "corporal" | "laser" | "avancada">("facial");
 
   // Filter procedures by tab
   const tabProcedures = procedures.filter((p) => p.category === activeTab);
-
-  // Dynamic border radius for buttons
-  const btnRadius =
-    themeConfig.styles.button === "pill"
-      ? "rounded-full"
-      : themeConfig.styles.button === "rounded"
-      ? "rounded-xl"
-      : "rounded-none";
-
-  // Dynamic style for cards
-  const cardStyleClass =
-    themeConfig.styles.card === "glass"
-      ? "glass-card"
-      : themeConfig.styles.card === "bordered"
-      ? "bg-white dark:bg-stone-900 border border-stone-200/60 dark:border-stone-800/40"
-      : "bg-white dark:bg-stone-900 shadow-xl shadow-stone-500/5 dark:shadow-none border border-transparent";
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -67,7 +48,7 @@ export default function Home() {
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-r from-stone-50/95 via-stone-50/80 to-transparent dark:from-stone-950/95 dark:via-stone-950/85 dark:to-transparent z-10" />
           <img
-            src={clinicConfig.seo.ogImage}
+            src={clinicConfig.heroImage || clinicConfig.seo.ogImage}
             alt="Recepção de luxo da clínica"
             className="w-full h-full object-cover object-center scale-105"
           />

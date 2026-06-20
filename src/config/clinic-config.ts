@@ -2,6 +2,8 @@ export interface ClinicConfig {
   name: string;
   slogan: string;
   logoText: string;
+  logoImage?: string;
+  heroImage?: string;
   phone: string;
   whatsapp: string;
   email: string;

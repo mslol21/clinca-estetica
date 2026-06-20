@@ -3,10 +3,11 @@
 import React, { useState, useEffect } from "react";
 import { MessageSquare, X, Send } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { clinicConfig } from "@/config/clinic-config";
 import { usePathname } from "next/navigation";
+import { useDatabase } from "@/context/DatabaseContext";
 
 export const FloatingWhatsApp: React.FC = () => {
+  const { clinicConfig } = useDatabase();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");

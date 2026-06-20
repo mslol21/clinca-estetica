@@ -4,10 +4,9 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ZoomIn, ZoomOut, Maximize2, Sparkles } from "lucide-react";
 import { useDatabase } from "@/context/DatabaseContext";
-import { themeConfig } from "@/config/theme-config";
 
 export default function Galeria() {
-  const { gallery } = useDatabase();
+  const { gallery, btnRadius, cardStyleClass } = useDatabase();
   const [selectedFilter, setSelectedFilter] = useState<"todos" | "facial" | "corporal" | "laser" | "clinica">("todos");
   const [activePhoto, setActivePhoto] = useState<string | null>(null);
   const [zoomScale, setZoomScale] = useState(1);
@@ -40,21 +39,7 @@ export default function Galeria() {
   const zoomIn = () => setZoomScale((prev) => Math.min(prev + 0.25, 2.5));
   const zoomOut = () => setZoomScale((prev) => Math.max(prev - 0.25, 0.75));
 
-  // Dynamic border radius for buttons
-  const btnRadius =
-    themeConfig.styles.button === "pill"
-      ? "rounded-full"
-      : themeConfig.styles.button === "rounded"
-      ? "rounded-xl"
-      : "rounded-none";
 
-  // Dynamic style for cards
-  const cardStyleClass =
-    themeConfig.styles.card === "glass"
-      ? "glass-card"
-      : themeConfig.styles.card === "bordered"
-      ? "bg-white dark:bg-stone-900 border border-stone-200/60 dark:border-stone-800/40"
-      : "bg-white dark:bg-stone-900 shadow-xl shadow-stone-500/5 dark:shadow-none border border-transparent";
 
   return (
     <div className="relative pt-12 pb-20 overflow-hidden">

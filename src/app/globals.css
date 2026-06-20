@@ -18,8 +18,8 @@
   --color-gold-900: #423525;
   --color-gold-950: #251e15;
 
-  --font-serif: var(--font-serif), Cormorant Garamond, serif;
-  --font-sans: var(--font-sans), Montserrat, sans-serif;
+  --font-serif: var(--luxe-font-heading, var(--font-serif)), Cormorant Garamond, serif;
+  --font-sans: var(--luxe-font-body, var(--font-sans)), Montserrat, sans-serif;
   
   --animate-float: float 6s ease-in-out infinite;
   --animate-float-slow: float 8s ease-in-out infinite;

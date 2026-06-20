@@ -4,19 +4,10 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Sparkles, Heart, Shield } from "lucide-react";
 import { useDatabase } from "@/context/DatabaseContext";
-import { themeConfig } from "@/config/theme-config";
 
 export default function Sobre() {
-  const { clinicConfig } = useDatabase();
+  const { clinicConfig, cardStyleClass } = useDatabase();
   const about = clinicConfig.about;
-
-  // Dynamic style for cards
-  const cardStyleClass =
-    themeConfig.styles.card === "glass"
-      ? "glass-card"
-      : themeConfig.styles.card === "bordered"
-      ? "bg-white dark:bg-stone-900 border border-stone-200/60 dark:border-stone-800/40"
-      : "bg-white dark:bg-stone-900 shadow-xl shadow-stone-500/5 dark:shadow-none border border-transparent";
 
   const containerVariants = {
     hidden: { opacity: 0 },

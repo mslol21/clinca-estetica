@@ -5,11 +5,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Sun, Moon, Menu, X, Calendar } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { clinicConfig } from "@/config/clinic-config";
-import { themeConfig } from "@/config/theme-config";
+import { useDatabase } from "@/context/DatabaseContext";
 
 export const Header: React.FC = () => {
   const pathname = usePathname();
+  const { clinicConfig, btnRadius } = useDatabase();
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -51,12 +51,7 @@ export const Header: React.FC = () => {
   ];
 
   // Helper for dynamic button radius
-  const btnRadiusClass =
-    themeConfig.styles.button === "pill"
-      ? "rounded-full"
-      : themeConfig.styles.button === "rounded"
-      ? "rounded-xl"
-      : "rounded-none";
+  const btnRadiusClass = btnRadius;
 
   // Don't show header in admin dashboard paths
   if (pathname?.startsWith("/admin")) return null;
@@ -72,13 +67,23 @@ export const Header: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
           {/* Brand Logo */}
-          <Link href="/" className="flex flex-col select-none">
-            <span className="font-serif text-xl tracking-[0.25em] uppercase text-stone-850 dark:text-stone-100 font-medium">
-              {clinicConfig.logoText || clinicConfig.name}
-            </span>
-            <span className="text-[9px] tracking-[0.2em] uppercase text-stone-500 dark:text-stone-400 font-light -mt-0.5">
-              Premium Concept
-            </span>
+          <Link href="/" className="flex items-center gap-3 select-none">
+            {clinicConfig.logoImage ? (
+              <img
+                src={clinicConfig.logoImage}
+                alt={clinicConfig.name}
+                className="h-10 w-auto object-contain max-h-[44px]"
+              />
+            ) : (
+              <div className="flex flex-col">
+                <span className="font-serif text-xl tracking-[0.25em] uppercase text-stone-850 dark:text-stone-100 font-medium">
+                  {clinicConfig.logoText || clinicConfig.name}
+                </span>
+                <span className="text-[9px] tracking-[0.2em] uppercase text-stone-500 dark:text-stone-400 font-light -mt-0.5">
+                  Premium Concept
+                </span>
+              </div>
+            )}
           </Link>
 
           {/* Desktop Nav Links */}

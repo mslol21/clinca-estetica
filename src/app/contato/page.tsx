@@ -4,10 +4,9 @@ import React, { useState } from "react";
 import { Phone, Mail, MapPin, Clock, Send, MessageSquare } from "lucide-react";
 import { useDatabase } from "@/context/DatabaseContext";
 import { useToast } from "@/components/ui/Toast";
-import { themeConfig } from "@/config/theme-config";
 
 export default function Contato() {
-  const { clinicConfig } = useDatabase();
+  const { clinicConfig, btnRadius, cardStyleClass } = useDatabase();
   const { success, error } = useToast();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -15,21 +14,7 @@ export default function Contato() {
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
 
-  // Dynamic border radius for buttons
-  const btnRadius =
-    themeConfig.styles.button === "pill"
-      ? "rounded-full"
-      : themeConfig.styles.button === "rounded"
-      ? "rounded-xl"
-      : "rounded-none";
 
-  // Dynamic style for cards
-  const cardStyleClass =
-    themeConfig.styles.card === "glass"
-      ? "glass-card"
-      : themeConfig.styles.card === "bordered"
-      ? "bg-white dark:bg-stone-900 border border-stone-200/60 dark:border-stone-800/40"
-      : "bg-white dark:bg-stone-900 shadow-xl shadow-stone-500/5 dark:shadow-none border border-transparent";
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

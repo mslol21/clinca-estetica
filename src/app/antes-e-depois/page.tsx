@@ -5,10 +5,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Calendar, Clock, Star } from "lucide-react";
 import { useDatabase } from "@/context/DatabaseContext";
 import { BeforeAfterSlider } from "@/components/site/BeforeAfterSlider";
-import { themeConfig } from "@/config/theme-config";
 
 export default function AntesEDepois() {
-  const { beforeAfter } = useDatabase();
+  const { beforeAfter, btnRadius, cardStyleClass } = useDatabase();
   const [selectedFilter, setSelectedFilter] = useState<"todos" | "facial" | "corporal" | "laser" | "avancada">("todos");
 
   const filters = [
@@ -24,21 +23,7 @@ export default function AntesEDepois() {
       ? beforeAfter
       : beforeAfter.filter((item) => item.category === selectedFilter);
 
-  // Dynamic border radius for buttons
-  const btnRadius =
-    themeConfig.styles.button === "pill"
-      ? "rounded-full"
-      : themeConfig.styles.button === "rounded"
-      ? "rounded-xl"
-      : "rounded-none";
 
-  // Dynamic style for cards
-  const cardStyleClass =
-    themeConfig.styles.card === "glass"
-      ? "glass-card"
-      : themeConfig.styles.card === "bordered"
-      ? "bg-white dark:bg-stone-900 border border-stone-200/60 dark:border-stone-800/40"
-      : "bg-white dark:bg-stone-900 shadow-xl shadow-stone-500/5 dark:shadow-none border border-transparent";
 
   return (
     <div className="relative pt-12 pb-20 overflow-hidden">

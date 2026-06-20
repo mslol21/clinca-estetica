@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { clinicConfig } from "@/config/clinic-config";
+import { useDatabase } from "@/context/DatabaseContext";
 
 export const LoadingScreen: React.FC = () => {
+  const { clinicConfig } = useDatabase();
   const [show, setShow] = useState(true);
 
   useEffect(() => {

@@ -6,10 +6,9 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Clock, Info, Check, HelpCircle, Calendar, Plus, Minus } from "lucide-react";
 import { useDatabase } from "@/context/DatabaseContext";
-import { themeConfig } from "@/config/theme-config";
 
 function ProcedimentosContent() {
-  const { procedures } = useDatabase();
+  const { procedures, btnRadius, cardStyleClass } = useDatabase();
   const searchParams = useSearchParams();
   const [selectedCategory, setSelectedCategory] = useState<"todos" | "facial" | "corporal" | "laser" | "avancada">("todos");
   const [expandedFaq, setExpandedFaq] = useState<{ [key: string]: boolean }>({});
@@ -41,21 +40,7 @@ function ProcedimentosContent() {
       ? procedures
       : procedures.filter((p) => p.category === selectedCategory);
 
-  // Dynamic border radius for buttons
-  const btnRadius =
-    themeConfig.styles.button === "pill"
-      ? "rounded-full"
-      : themeConfig.styles.button === "rounded"
-      ? "rounded-xl"
-      : "rounded-none";
 
-  // Dynamic style for cards
-  const cardStyleClass =
-    themeConfig.styles.card === "glass"
-      ? "glass-card"
-      : themeConfig.styles.card === "bordered"
-      ? "bg-white dark:bg-stone-900 border border-stone-200/60 dark:border-stone-800/40"
-      : "bg-white dark:bg-stone-900 shadow-xl shadow-stone-500/5 dark:shadow-none border border-transparent";
 
   return (
     <div className="relative pt-12 pb-20 overflow-hidden">
