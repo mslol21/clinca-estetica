@@ -50,7 +50,7 @@ function ProcedimentosContent() {
           <span className="text-[10px] uppercase tracking-[0.3em] font-semibold text-gold-500 dark:text-gold-400">
             Nossos Protocolos
           </span>
-          <h1 className="font-serif text-4xl sm:text-5xl tracking-tight text-stone-850 dark:text-stone-100 mt-3 mb-6">
+          <h1 className="font-serif text-4xl sm:text-5xl tracking-tight text-stone-950 dark:text-stone-100 mt-3 mb-6">
             Procedimentos e Tratamentos
           </h1>
           <p className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 max-w-lg mx-auto font-light leading-relaxed">
@@ -60,7 +60,7 @@ function ProcedimentosContent() {
       </section>
 
       {/* Categories Bar */}
-      <section className="py-8 bg-white dark:bg-stone-950/60 border-y border-stone-200/50 dark:border-stone-850/50 sticky top-[72px] lg:top-[80px] z-40 backdrop-blur-md transition-colors">
+      <section className="py-8 bg-white dark:bg-stone-950/60 border-y border-stone-200/50 dark:border-stone-800/50 sticky top-[72px] lg:top-[80px] z-40 backdrop-blur-md transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-center">
           <div className="flex flex-wrap gap-2 md:gap-3 items-center justify-center">
             {categories.map((cat) => (
@@ -70,7 +70,7 @@ function ProcedimentosContent() {
                 className={`px-4 md:px-6 py-2.5 ${btnRadius} text-xs uppercase tracking-widest font-semibold transition-all ${
                   selectedCategory === cat.id
                     ? "bg-gradient-to-r from-gold-500 to-gold-400 text-white shadow-lg shadow-gold-500/10"
-                    : "text-stone-500 hover:text-stone-850 dark:text-stone-400 dark:hover:text-stone-200 bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800"
+                    : "text-stone-500 hover:text-stone-950 dark:text-stone-400 dark:hover:text-stone-200 bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800"
                 }`}
               >
                 {cat.name}
@@ -108,7 +108,7 @@ function ProcedimentosContent() {
                       </div>
                       
                       {/* Price & Duration quick info */}
-                      <div className="mt-6 flex items-center justify-between p-4 bg-stone-50 dark:bg-stone-950 rounded-xl border border-stone-100 dark:border-stone-850/50">
+                      <div className="mt-6 flex items-center justify-between p-4 bg-stone-50 dark:bg-stone-950 rounded-xl border border-stone-100 dark:border-stone-800/50">
                         <div className="flex items-center gap-2">
                           <Clock size={16} className="text-gold-550 shrink-0" />
                           <span className="text-xs text-stone-500 dark:text-stone-400 font-light">
@@ -140,7 +140,7 @@ function ProcedimentosContent() {
                       <span className="px-2.5 py-0.5 rounded bg-gold-100/50 dark:bg-gold-950/20 border border-gold-300/20 text-gold-600 dark:text-gold-400 text-[9px] uppercase tracking-widest font-semibold mb-3">
                         Estética {proc.category}
                       </span>
-                      <h2 className="font-serif text-2xl sm:text-3xl text-stone-850 dark:text-stone-100 font-medium mb-4">
+                      <h2 className="font-serif text-2xl sm:text-3xl text-stone-950 dark:text-stone-100 font-medium mb-4">
                         {proc.name}
                       </h2>
                       <p className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 leading-relaxed font-light mb-6">

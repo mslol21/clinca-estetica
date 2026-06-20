@@ -71,7 +71,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15, duration: 0.8 }}
-              className="font-serif text-4xl sm:text-5xl lg:text-6xl tracking-tight text-stone-850 dark:text-stone-100 leading-[1.1] mb-6"
+              className="font-serif text-4xl sm:text-5xl lg:text-6xl tracking-tight text-stone-950 dark:text-stone-100 leading-[1.1] mb-6"
             >
               Realce sua <br />
               <span className="font-serif italic font-light text-gold-500 dark:text-gold-400">
@@ -156,7 +156,7 @@ export default function Home() {
             <span className="text-[10px] uppercase tracking-[0.3em] font-semibold text-gold-500 dark:text-gold-400">
               Exclusividade & Cuidado
             </span>
-            <h2 className="font-serif text-3xl sm:text-4xl tracking-tight text-stone-850 dark:text-stone-100 mt-2 font-medium">
+            <h2 className="font-serif text-3xl sm:text-4xl tracking-tight text-stone-950 dark:text-stone-100 mt-2 font-medium">
               Diferenciais da {clinicConfig.name}
             </h2>
             <div className="w-12 h-[1px] bg-gold-400 mx-auto mt-4" />
@@ -228,7 +228,7 @@ export default function Home() {
               <span className="text-[10px] uppercase tracking-[0.3em] font-semibold text-gold-500 dark:text-gold-400">
                 Tratamentos de Alta Performance
               </span>
-              <h2 className="font-serif text-3xl sm:text-4xl tracking-tight text-stone-850 dark:text-stone-100 mt-2 font-medium">
+              <h2 className="font-serif text-3xl sm:text-4xl tracking-tight text-stone-950 dark:text-stone-100 mt-2 font-medium">
                 Procedimentos em Destaque
               </h2>
             </div>
@@ -255,7 +255,7 @@ export default function Home() {
                 className={`px-5 py-2.5 rounded-full text-xs uppercase tracking-widest font-semibold transition-all ${
                   activeTab === tab.id
                     ? "bg-gradient-to-r from-gold-500 to-gold-400 text-white shadow-lg shadow-gold-500/10"
-                    : "text-stone-500 hover:text-stone-850 dark:text-stone-400 dark:hover:text-stone-200 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800"
+                    : "text-stone-500 hover:text-stone-950 dark:text-stone-400 dark:hover:text-stone-200 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800"
                 }`}
               >
                 {tab.name}
@@ -328,7 +328,7 @@ export default function Home() {
             <span className="text-[10px] uppercase tracking-[0.3em] font-semibold text-gold-500 dark:text-gold-400">
               Resultados Comprovados
             </span>
-            <h2 className="font-serif text-3xl sm:text-4xl tracking-tight text-stone-850 dark:text-stone-100 mt-2 font-medium">
+            <h2 className="font-serif text-3xl sm:text-4xl tracking-tight text-stone-950 dark:text-stone-100 mt-2 font-medium">
               Transformações Reais
             </h2>
             <div className="w-12 h-[1px] bg-gold-400 mx-auto mt-4" />
@@ -395,7 +395,7 @@ export default function Home() {
             <span className="text-[10px] uppercase tracking-[0.3em] font-semibold text-gold-500 dark:text-gold-400">
               A Opinião das Nossas Clientes
             </span>
-            <h2 className="font-serif text-3xl sm:text-4xl tracking-tight text-stone-850 dark:text-stone-100 mt-2 font-medium">
+            <h2 className="font-serif text-3xl sm:text-4xl tracking-tight text-stone-950 dark:text-stone-100 mt-2 font-medium">
               Avaliações & Depoimentos
             </h2>
             <div className="w-12 h-[1px] bg-gold-400 mx-auto mt-4" />
@@ -448,7 +448,7 @@ export default function Home() {
               <span className="text-[10px] uppercase tracking-[0.25em] font-semibold text-gold-500 dark:text-gold-400">
                 Praticidade & Conforto
               </span>
-              <h3 className="font-serif text-2xl sm:text-3xl tracking-tight text-stone-850 dark:text-stone-100 mt-2 mb-4 font-medium">
+              <h3 className="font-serif text-2xl sm:text-3xl tracking-tight text-stone-950 dark:text-stone-100 mt-2 mb-4 font-medium">
                 Atendimento Particular com Reembolso Orientado
               </h3>
               <p className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 leading-relaxed font-light mb-6">
@@ -466,7 +466,7 @@ export default function Home() {
 
             {/* Right Column: Payments */}
             <div className={`p-8 rounded-2xl ${cardStyleClass}`}>
-              <h4 className="font-serif text-lg text-stone-850 dark:text-stone-100 mb-4 font-medium">
+              <h4 className="font-serif text-lg text-stone-950 dark:text-stone-100 mb-4 font-medium">
                 Condições de Pagamento
               </h4>
               <ul className="flex flex-col gap-3 text-xs text-stone-500 dark:text-stone-400 font-light">
@@ -497,7 +497,7 @@ export default function Home() {
             Sua Transformação Começa Aqui
           </span>
           
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl tracking-tight text-stone-850 dark:text-stone-100 mt-3 mb-6 font-light">
+          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl tracking-tight text-stone-950 dark:text-stone-100 mt-3 mb-6 font-light">
             Pronta para vivenciar <br />
             o seu momento <span className="font-serif italic font-light text-gold-500 dark:text-gold-400">Luxe</span>?
           </h2>

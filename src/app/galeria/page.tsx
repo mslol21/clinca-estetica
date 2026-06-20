@@ -49,7 +49,7 @@ export default function Galeria() {
           <span className="text-[10px] uppercase tracking-[0.3em] font-semibold text-gold-500 dark:text-gold-400">
             Nossos Espaços & Procedimentos
           </span>
-          <h1 className="font-serif text-4xl sm:text-5xl tracking-tight text-stone-850 dark:text-stone-100 mt-3 mb-6">
+          <h1 className="font-serif text-4xl sm:text-5xl tracking-tight text-stone-950 dark:text-stone-100 mt-3 mb-6">
             Galeria de Fotos
           </h1>
           <p className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 max-w-lg mx-auto font-light leading-relaxed">
@@ -59,7 +59,7 @@ export default function Galeria() {
       </section>
 
       {/* Filters Bar */}
-      <section className="py-8 bg-white dark:bg-stone-950/60 border-y border-stone-200/50 dark:border-stone-850/50 sticky top-[72px] lg:top-[80px] z-40 backdrop-blur-md transition-colors">
+      <section className="py-8 bg-white dark:bg-stone-950/60 border-y border-stone-200/50 dark:border-stone-800/50 sticky top-[72px] lg:top-[80px] z-40 backdrop-blur-md transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-center">
           <div className="flex flex-wrap gap-2 md:gap-3 items-center justify-center">
             {filters.map((f) => (
@@ -69,7 +69,7 @@ export default function Galeria() {
                 className={`px-5 py-2 ${btnRadius} text-xs uppercase tracking-widest font-semibold transition-all ${
                   selectedFilter === f.id
                     ? "bg-gradient-to-r from-gold-500 to-gold-400 text-white shadow-lg shadow-gold-500/10"
-                    : "text-stone-500 hover:text-stone-850 dark:text-stone-400 dark:hover:text-stone-200 bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800"
+                    : "text-stone-500 hover:text-stone-950 dark:text-stone-400 dark:hover:text-stone-200 bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800"
                 }`}
               >
                 {f.name}

@@ -194,7 +194,7 @@ function AgendamentoContent() {
           <span className="text-[10px] uppercase tracking-[0.3em] font-semibold text-gold-500 block mb-2">
             Tudo Pronto!
           </span>
-          <h2 className="font-serif text-2xl text-stone-850 dark:text-stone-100 mb-6 font-medium">
+          <h2 className="font-serif text-2xl text-stone-950 dark:text-stone-100 mb-6 font-medium">
             Agendamento Confirmado
           </h2>
 
@@ -204,13 +204,13 @@ function AgendamentoContent() {
           <ul className="w-full flex flex-col gap-4 text-left text-xs text-stone-600 dark:text-stone-300 font-light pb-6 border-b border-stone-100 dark:border-stone-800">
             <li className="flex justify-between">
               <span className="font-medium text-stone-400">Procedimento:</span>
-              <span className="text-stone-850 dark:text-stone-100 font-semibold">
+              <span className="text-stone-950 dark:text-stone-100 font-semibold">
                 {selectedProcedure.name}
               </span>
             </li>
             <li className="flex justify-between">
               <span className="font-medium text-stone-400">Data agendada:</span>
-              <span className="text-stone-850 dark:text-stone-100 font-semibold">
+              <span className="text-stone-950 dark:text-stone-100 font-semibold">
                 {new Date(selectedDate + "T00:00:00").toLocaleDateString("pt-BR", {
                   weekday: "long",
                   day: "numeric",
@@ -220,17 +220,17 @@ function AgendamentoContent() {
             </li>
             <li className="flex justify-between">
               <span className="font-medium text-stone-400">Horário:</span>
-              <span className="text-stone-850 dark:text-stone-100 font-semibold">
+              <span className="text-stone-950 dark:text-stone-100 font-semibold">
                 {selectedTime}
               </span>
             </li>
             <li className="flex justify-between">
               <span className="font-medium text-stone-400">Paciente:</span>
-              <span className="text-stone-850 dark:text-stone-100 font-semibold">{custName}</span>
+              <span className="text-stone-950 dark:text-stone-100 font-semibold">{custName}</span>
             </li>
           </ul>
 
-          <div className="mt-6 p-4 bg-stone-50 dark:bg-stone-950 rounded-xl border border-stone-100 dark:border-stone-850/50 w-full text-stone-450 leading-relaxed font-light mb-8">
+          <div className="mt-6 p-4 bg-stone-50 dark:bg-stone-950 rounded-xl border border-stone-100 dark:border-stone-800/50 w-full text-stone-450 leading-relaxed font-light mb-8">
             <p>
               Enviamos os detalhes da confirmação e orientações pré-procedimento para o seu e-mail (
               <strong>{custEmail}</strong>) e entraremos em contato via WhatsApp no número <strong>{custPhone}</strong>.
@@ -240,7 +240,7 @@ function AgendamentoContent() {
           <div className="flex gap-4 w-full">
             <button
               onClick={() => router.push("/")}
-              className={`flex-1 py-3 border border-stone-200 dark:border-stone-800 text-stone-600 dark:text-stone-300 ${btnRadius} font-semibold uppercase tracking-widest cursor-pointer hover:bg-stone-50 dark:hover:bg-stone-850 transition-colors`}
+              className={`flex-1 py-3 border border-stone-200 dark:border-stone-800 text-stone-600 dark:text-stone-300 ${btnRadius} font-semibold uppercase tracking-widest cursor-pointer hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors`}
             >
               Voltar ao Início
             </button>
@@ -262,7 +262,7 @@ function AgendamentoContent() {
         <span className="text-[9px] uppercase tracking-[0.3em] font-semibold text-gold-500">
           Agenda Digital - {clinicConfig.logoText || "Clínica"}
         </span>
-        <h1 className="font-serif text-3xl tracking-tight text-stone-850 dark:text-stone-100 mt-2 font-medium">
+        <h1 className="font-serif text-3xl tracking-tight text-stone-950 dark:text-stone-100 mt-2 font-medium">
           Agendamento Online
         </h1>
         <div className="w-12 h-[1px] bg-gold-400 mx-auto mt-4" />
@@ -311,7 +311,7 @@ function AgendamentoContent() {
               exit={{ opacity: 0, x: -20 }}
               className="flex flex-col animate-fade-in"
             >
-              <h3 className="font-serif text-lg text-stone-800 dark:text-stone-150 mb-6 font-semibold flex items-center gap-2 border-b border-stone-100 dark:border-stone-850 pb-3">
+              <h3 className="font-serif text-lg text-stone-800 dark:text-stone-150 mb-6 font-semibold flex items-center gap-2 border-b border-stone-100 dark:border-stone-800 pb-3">
                 <Sparkles size={16} className="text-gold-550" /> Selecione o Procedimento
               </h3>
 
@@ -329,7 +329,7 @@ function AgendamentoContent() {
                       className={`text-left p-5 rounded-2xl border transition-all cursor-pointer flex justify-between items-center gap-4 ${
                         isSelected
                           ? "bg-gold-50/50 dark:bg-gold-950/10 border-gold-450 shadow-md"
-                          : "bg-stone-50/50 dark:bg-stone-950/20 border-stone-150 dark:border-stone-850/60 hover:bg-stone-100/50 dark:hover:bg-stone-900/50"
+                          : "bg-stone-50/50 dark:bg-stone-950/20 border-stone-150 dark:border-stone-800/60 hover:bg-stone-100/50 dark:hover:bg-stone-900/50"
                       }`}
                     >
                       <div className="flex items-center gap-4">
@@ -339,7 +339,7 @@ function AgendamentoContent() {
                           className="w-14 h-14 rounded-xl object-cover shrink-0"
                         />
                         <div>
-                          <h4 className="font-semibold text-xs text-stone-850 dark:text-stone-200">
+                          <h4 className="font-semibold text-xs text-stone-950 dark:text-stone-200">
                             {proc.name}
                           </h4>
                           <span className="text-[10px] text-stone-400 block font-light mt-0.5">
@@ -369,7 +369,7 @@ function AgendamentoContent() {
               exit={{ opacity: 0, x: -20 }}
               className="flex flex-col"
             >
-              <h3 className="font-serif text-lg text-stone-800 dark:text-stone-150 mb-6 font-semibold flex items-center gap-2 border-b border-stone-100 dark:border-stone-850 pb-3">
+              <h3 className="font-serif text-lg text-stone-800 dark:text-stone-150 mb-6 font-semibold flex items-center gap-2 border-b border-stone-100 dark:border-stone-800 pb-3">
                 <CalendarIcon size={16} className="text-gold-550" /> Escolha Data & Horário
               </h3>
 
@@ -390,7 +390,7 @@ function AgendamentoContent() {
                       className={`p-4 rounded-xl border text-center shrink-0 min-w-[90px] cursor-pointer transition-all ${
                         isSelected
                           ? "bg-gold-500 border-gold-500 text-white shadow-md"
-                          : "bg-stone-50 dark:bg-stone-950 border-stone-200 dark:border-stone-850 hover:bg-stone-100 dark:hover:bg-stone-900 text-stone-700 dark:text-stone-300"
+                          : "bg-stone-50 dark:bg-stone-950 border-stone-200 dark:border-stone-800 hover:bg-stone-100 dark:hover:bg-stone-900 text-stone-700 dark:text-stone-300"
                       }`}
                     >
                       <span className="text-[9px] uppercase tracking-wider block font-light opacity-80 mb-1">
@@ -420,7 +420,7 @@ function AgendamentoContent() {
                           className={`py-3 rounded-xl border text-center font-medium cursor-pointer transition-all ${
                             isSelected
                               ? "bg-gold-500 border-gold-500 text-white shadow-md"
-                              : "bg-stone-50 dark:bg-stone-950 border-stone-200 dark:border-stone-850 hover:bg-stone-100 dark:hover:bg-stone-900 text-stone-700 dark:text-stone-300"
+                              : "bg-stone-50 dark:bg-stone-950 border-stone-200 dark:border-stone-800 hover:bg-stone-100 dark:hover:bg-stone-900 text-stone-700 dark:text-stone-300"
                           }`}
                         >
                           {hr}
@@ -446,7 +446,7 @@ function AgendamentoContent() {
               exit={{ opacity: 0, x: -20 }}
               className="flex flex-col"
             >
-              <h3 className="font-serif text-lg text-stone-800 dark:text-stone-150 mb-6 font-semibold flex items-center gap-2 border-b border-stone-100 dark:border-stone-850 pb-3">
+              <h3 className="font-serif text-lg text-stone-800 dark:text-stone-150 mb-6 font-semibold flex items-center gap-2 border-b border-stone-100 dark:border-stone-800 pb-3">
                 <UserCheck size={16} className="text-gold-550" /> Confirmar seus Dados
               </h3>
 
@@ -467,7 +467,7 @@ function AgendamentoContent() {
                       value={custName}
                       onChange={(e) => setCustName(e.target.value)}
                       placeholder="Ex: Mariana Albuquerque"
-                      className="w-full p-3 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 transition-colors dark:text-white"
+                      className="w-full p-3 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450 transition-colors dark:text-white"
                     />
                   </div>
 
@@ -483,7 +483,7 @@ function AgendamentoContent() {
                         value={custPhone}
                         onChange={(e) => setCustPhone(e.target.value)}
                         placeholder="Ex: (11) 99999-8888"
-                        className="w-full p-3 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 transition-colors dark:text-white"
+                        className="w-full p-3 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450 transition-colors dark:text-white"
                       />
                     </div>
 
@@ -498,7 +498,7 @@ function AgendamentoContent() {
                         value={custEmail}
                         onChange={(e) => setCustEmail(e.target.value)}
                         placeholder="Ex: mariana@email.com"
-                        className="w-full p-3 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 transition-colors dark:text-white"
+                        className="w-full p-3 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450 transition-colors dark:text-white"
                       />
                     </div>
                   </div>
@@ -513,7 +513,7 @@ function AgendamentoContent() {
                       value={custNotes}
                       onChange={(e) => setCustNotes(e.target.value)}
                       placeholder="Diga se possui alguma restrição médica, alergia ou quer complementar os detalhes..."
-                      className="w-full p-3 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 transition-colors resize-none dark:text-white"
+                      className="w-full p-3 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450 transition-colors resize-none dark:text-white"
                     />
                   </div>
 
@@ -547,16 +547,16 @@ function AgendamentoContent() {
                     </div>
                   </div>
 
-                  <div className="pt-3 border-t border-stone-150 dark:border-stone-850/40 flex flex-col gap-2 font-sans text-stone-600 dark:text-stone-400">
+                  <div className="pt-3 border-t border-stone-150 dark:border-stone-800/40 flex flex-col gap-2 font-sans text-stone-600 dark:text-stone-400">
                     <div className="flex justify-between items-center">
                       <span className="flex items-center gap-1.5"><CalendarIcon size={13} className="text-gold-550" /> Data:</span>
-                      <span className="font-semibold text-stone-850 dark:text-stone-200">
+                      <span className="font-semibold text-stone-950 dark:text-stone-200">
                         {new Date(selectedDate + "T00:00:00").toLocaleDateString("pt-BR")}
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="flex items-center gap-1.5"><Clock size={13} className="text-gold-550" /> Horário:</span>
-                      <span className="font-semibold text-stone-850 dark:text-stone-200">{selectedTime}</span>
+                      <span className="font-semibold text-stone-950 dark:text-stone-200">{selectedTime}</span>
                     </div>
                   </div>
 
@@ -576,7 +576,7 @@ function AgendamentoContent() {
 
         {/* Wizard Controls */}
         {!bookingConfirmed && (
-          <div className="mt-8 pt-6 border-t border-stone-100 dark:border-stone-850 flex items-center justify-between">
+          <div className="mt-8 pt-6 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between">
             <button
               onClick={prevStep}
               disabled={step === 1}

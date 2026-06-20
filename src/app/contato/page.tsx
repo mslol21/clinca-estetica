@@ -46,7 +46,7 @@ export default function Contato() {
           <span className="text-[10px] uppercase tracking-[0.3em] font-semibold text-gold-500 dark:text-gold-400">
             Fale Conosco
           </span>
-          <h1 className="font-serif text-4xl sm:text-5xl tracking-tight text-stone-850 dark:text-stone-100 mt-3 mb-6">
+          <h1 className="font-serif text-4xl sm:text-5xl tracking-tight text-stone-950 dark:text-stone-100 mt-3 mb-6">
             Contato & Localização
           </h1>
           <p className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 max-w-lg mx-auto font-light leading-relaxed">
@@ -64,7 +64,7 @@ export default function Contato() {
               <span className="text-[9px] uppercase tracking-[0.25em] font-semibold text-gold-550 block mb-2">
                 Atendimento Exclusivo
               </span>
-              <h2 className="font-serif text-2xl tracking-tight text-stone-850 dark:text-stone-150 mb-6 font-medium">
+              <h2 className="font-serif text-2xl tracking-tight text-stone-950 dark:text-stone-150 mb-6 font-medium">
                 Canais de Relacionamento
               </h2>
               
@@ -113,7 +113,7 @@ export default function Contato() {
 
             {/* Working hours box */}
             <div className="p-6 rounded-2xl bg-stone-50 dark:bg-stone-900/40 border border-stone-150 dark:border-stone-800/40">
-              <h4 className="font-serif text-sm text-stone-850 dark:text-stone-150 mb-3 font-semibold flex items-center gap-2">
+              <h4 className="font-serif text-sm text-stone-950 dark:text-stone-150 mb-3 font-semibold flex items-center gap-2">
                 <Clock size={16} className="text-gold-550" /> Horários de Funcionamento
               </h4>
               <ul className="flex flex-col gap-2 text-xs text-stone-500 dark:text-stone-400 font-light">
@@ -135,7 +135,7 @@ export default function Contato() {
 
           {/* Form Column */}
           <div className={`lg:col-span-7 p-6 md:p-10 ${cardStyleClass} rounded-3xl`}>
-            <h3 className="font-serif text-xl text-stone-850 dark:text-stone-155 mb-6 font-medium">
+            <h3 className="font-serif text-xl text-stone-950 dark:text-stone-155 mb-6 font-medium">
               Envie uma Mensagem
             </h3>
             
@@ -153,7 +153,7 @@ export default function Contato() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Ex: Mariana Albuquerque"
-                    className="w-full p-3 bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-400 dark:focus:border-gold-650 transition-colors dark:text-white"
+                    className="w-full p-3 bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-400 dark:focus:border-gold-650 transition-colors dark:text-white"
                   />
                 </div>
 
@@ -169,7 +169,7 @@ export default function Contato() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Ex: mariana@email.com"
-                    className="w-full p-3 bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-400 dark:focus:border-gold-650 transition-colors dark:text-white"
+                    className="w-full p-3 bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-400 dark:focus:border-gold-650 transition-colors dark:text-white"
                   />
                 </div>
               </div>
@@ -185,7 +185,7 @@ export default function Contato() {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="Ex: (11) 99999-8888"
-                  className="w-full p-3 bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-400 dark:focus:border-gold-650 transition-colors dark:text-white"
+                  className="w-full p-3 bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-400 dark:focus:border-gold-650 transition-colors dark:text-white"
                 />
               </div>
 
@@ -201,7 +201,7 @@ export default function Contato() {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="Escreva sobre suas dúvidas, orçamento ou interesse em procedimentos..."
-                  className="w-full p-3 bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-400 dark:focus:border-gold-650 transition-colors dark:text-white resize-none"
+                  className="w-full p-3 bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-400 dark:focus:border-gold-650 transition-colors dark:text-white resize-none"
                 />
               </div>
 

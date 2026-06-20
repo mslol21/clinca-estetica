@@ -34,7 +34,7 @@ export default function Sobre() {
           <span className="text-[10px] uppercase tracking-[0.3em] font-semibold text-gold-500 dark:text-gold-400">
             {about?.essence ? "Nossa Essência" : "Sobre Nós"}
           </span>
-          <h1 className="font-serif text-4xl sm:text-5xl tracking-tight text-stone-850 dark:text-stone-100 mt-3 mb-6">
+          <h1 className="font-serif text-4xl sm:text-5xl tracking-tight text-stone-950 dark:text-stone-100 mt-3 mb-6">
             Sobre a {clinicConfig.name}
           </h1>
           <p className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 max-w-lg mx-auto font-light leading-relaxed">
@@ -86,7 +86,7 @@ export default function Sobre() {
             <span className="text-[10px] uppercase tracking-[0.3em] font-semibold text-gold-500 dark:text-gold-400">
               Nossos Pilares
             </span>
-            <h2 className="font-serif text-3xl tracking-tight text-stone-850 dark:text-stone-150 mt-2 font-medium">
+            <h2 className="font-serif text-3xl tracking-tight text-stone-950 dark:text-stone-150 mt-2 font-medium">
               Missão, Visão & Valores
             </h2>
             <div className="w-12 h-[1px] bg-gold-400 mx-auto mt-4" />

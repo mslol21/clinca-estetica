@@ -155,7 +155,7 @@ export default function DemoPage() {
                     type="text"
                     value={clinicConfig.name}
                     onChange={(e) => saveClinicConfig({ ...clinicConfig, name: e.target.value })}
-                    className="p-2 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 text-stone-800 dark:text-white"
+                    className="p-2 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450 text-stone-800 dark:text-white"
                   />
                 </div>
 
@@ -165,7 +165,7 @@ export default function DemoPage() {
                     type="text"
                     value={clinicConfig.slogan}
                     onChange={(e) => saveClinicConfig({ ...clinicConfig, slogan: e.target.value })}
-                    className="p-2 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 text-stone-800 dark:text-white"
+                    className="p-2 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450 text-stone-800 dark:text-white"
                   />
                 </div>
               </div>
@@ -182,7 +182,7 @@ export default function DemoPage() {
                     type="text"
                     value={clinicConfig.whatsapp}
                     onChange={(e) => saveClinicConfig({ ...clinicConfig, whatsapp: e.target.value })}
-                    className="p-2 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 text-stone-800 dark:text-white"
+                    className="p-2 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450 text-stone-800 dark:text-white"
                   />
                 </div>
 
@@ -197,7 +197,7 @@ export default function DemoPage() {
                         social: { ...clinicConfig.social, instagram: e.target.value },
                       })
                     }
-                    className="p-2 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 text-stone-800 dark:text-white"
+                    className="p-2 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450 text-stone-800 dark:text-white"
                   />
                 </div>
               </div>
@@ -231,7 +231,7 @@ export default function DemoPage() {
                           colors: { ...theme.colors, primary: e.target.value },
                         })
                       }
-                      className="w-20 p-1.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-lg outline-none font-mono text-[10px]"
+                      className="w-20 p-1.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-lg outline-none font-mono text-[10px]"
                     />
                   </div>
                 </div>
@@ -247,7 +247,7 @@ export default function DemoPage() {
                           styles: { ...theme.styles, button: e.target.value as any },
                         })
                       }
-                      className="p-2 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none text-stone-750 dark:text-stone-300"
+                      className="p-2 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none text-stone-750 dark:text-stone-300"
                     >
                       <option value="pill">Pill (Arredondado)</option>
                       <option value="rounded">Rounded (Suave)</option>
@@ -265,7 +265,7 @@ export default function DemoPage() {
                           styles: { ...theme.styles, card: e.target.value as any },
                         })
                       }
-                      className="p-2 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none text-stone-750 dark:text-stone-300"
+                      className="p-2 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none text-stone-750 dark:text-stone-300"
                     >
                       <option value="glass">Glassmorphism</option>
                       <option value="bordered">Borda Fina</option>
@@ -321,7 +321,7 @@ export default function DemoPage() {
             <div className="pt-4 border-t border-stone-200/50 dark:border-stone-800/40 flex flex-col gap-2 shrink-0">
               <button
                 onClick={handleRestore}
-                className="w-full py-3 border border-stone-200 dark:border-stone-800 hover:bg-stone-50 dark:hover:bg-stone-850 rounded-xl font-semibold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-stone-600 dark:text-stone-300"
+                className="w-full py-3 border border-stone-200 dark:border-stone-800 hover:bg-stone-50 dark:hover:bg-stone-800 rounded-xl font-semibold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-stone-600 dark:text-stone-300"
               >
                 <RefreshCw size={13} />
                 Restaurar Demonstração

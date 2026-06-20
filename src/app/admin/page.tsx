@@ -352,7 +352,7 @@ export default function AdminPanel() {
     <div className="min-h-screen bg-stone-100 dark:bg-stone-950 flex flex-col lg:flex-row font-sans text-xs transition-colors">
       
       {/* Mobile Header */}
-      <div className="lg:hidden bg-stone-50 dark:bg-stone-900 border-b border-stone-200 dark:border-stone-850 px-4 py-3 flex items-center justify-between z-40 shrink-0">
+      <div className="lg:hidden bg-stone-50 dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800 px-4 py-3 flex items-center justify-between z-40 shrink-0">
         <span className="font-serif font-bold text-stone-800 dark:text-stone-100 text-sm tracking-wide">
           {clinicConfig.logoText || "LUXE"} ADMIN
         </span>
@@ -362,10 +362,10 @@ export default function AdminPanel() {
       </div>
 
       {/* Sidebar navigation */}
-      <aside className={`w-full lg:w-64 bg-stone-50 dark:bg-stone-900 border-r border-stone-200 dark:border-stone-850 flex flex-col justify-between p-6 shrink-0 lg:block ${sidebarOpen ? "block" : "hidden"}`}>
+      <aside className={`w-full lg:w-64 bg-stone-50 dark:bg-stone-900 border-r border-stone-200 dark:border-stone-800 flex flex-col justify-between p-6 shrink-0 lg:block ${sidebarOpen ? "block" : "hidden"}`}>
         <div className="flex flex-col gap-8">
           <div className="hidden lg:flex flex-col">
-            <span className="font-serif font-bold text-base tracking-widest text-stone-850 dark:text-stone-100">
+            <span className="font-serif font-bold text-base tracking-widest text-stone-950 dark:text-stone-100">
               {clinicConfig.logoText || "LUXE"}
             </span>
             <span className="text-[9px] uppercase tracking-[0.25em] text-gold-550 mt-1 font-semibold">Painel Administrativo</span>
@@ -385,7 +385,7 @@ export default function AdminPanel() {
                   className={`w-full py-3 px-4 rounded-xl flex items-center gap-3 font-semibold transition-all text-left cursor-pointer ${
                     isActive
                       ? "bg-gold-500 text-white shadow-md shadow-gold-500/10"
-                      : "text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-850"
+                      : "text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-800"
                   }`}
                 >
                   <Icon size={16} />
@@ -396,7 +396,7 @@ export default function AdminPanel() {
           </nav>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-stone-200 dark:border-stone-850 flex flex-col gap-4">
+        <div className="mt-8 pt-6 border-t border-stone-200 dark:border-stone-800 flex flex-col gap-4">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-gold-100 dark:bg-gold-950/20 text-gold-600 flex items-center justify-center font-bold">
               {user.email?.[0].toUpperCase()}
@@ -422,7 +422,7 @@ export default function AdminPanel() {
         {/* Global Search & Action Bar */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
           <div>
-            <h2 className="font-serif text-2xl text-stone-850 dark:text-stone-100 font-medium capitalize">
+            <h2 className="font-serif text-2xl text-stone-950 dark:text-stone-100 font-medium capitalize">
               {activeTab === "galeria" ? "Galeria & Casos" : activeTab === "configuracoes" ? "Configurações" : activeTab}
             </h2>
             <p className="text-[10px] text-stone-400 font-light mt-1">
@@ -438,7 +438,7 @@ export default function AdminPanel() {
                 placeholder="Pesquisar..."
                 value={globalSearch}
                 onChange={(e) => setGlobalSearch(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 dark:text-white"
+                className="w-full pl-9 pr-4 py-2 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450 dark:text-white"
               />
             </div>
           </div>
@@ -460,7 +460,7 @@ export default function AdminPanel() {
                 <div className={`${cardStyleClass} p-5 rounded-2xl`}>
                   <span className="text-[10px] text-stone-400 uppercase tracking-widest font-light">Agendados Hoje</span>
                   <div className="flex items-baseline gap-2 mt-2">
-                    <span className="font-serif text-2xl font-semibold text-stone-850 dark:text-stone-100">{todayAppointments.length}</span>
+                    <span className="font-serif text-2xl font-semibold text-stone-950 dark:text-stone-100">{todayAppointments.length}</span>
                     <span className="text-[10px] text-stone-450">atendimentos</span>
                   </div>
                 </div>
@@ -468,7 +468,7 @@ export default function AdminPanel() {
                 <div className={`${cardStyleClass} p-5 rounded-2xl`}>
                   <span className="text-[10px] text-stone-400 uppercase tracking-widest font-light">Clientes Ativos</span>
                   <div className="flex items-baseline gap-2 mt-2">
-                    <span className="font-serif text-2xl font-semibold text-stone-850 dark:text-stone-100">{clients.length}</span>
+                    <span className="font-serif text-2xl font-semibold text-stone-950 dark:text-stone-100">{clients.length}</span>
                     <span className="text-[10px] text-stone-450">fichas</span>
                   </div>
                 </div>
@@ -476,7 +476,7 @@ export default function AdminPanel() {
                 <div className={`${cardStyleClass} p-5 rounded-2xl`}>
                   <span className="text-[10px] text-stone-400 uppercase tracking-widest font-light">Fotos na Galeria</span>
                   <div className="flex items-baseline gap-2 mt-2">
-                    <span className="font-serif text-2xl font-semibold text-stone-850 dark:text-stone-100">{gallery.length + beforeAfter.length}</span>
+                    <span className="font-serif text-2xl font-semibold text-stone-950 dark:text-stone-100">{gallery.length + beforeAfter.length}</span>
                     <span className="text-[10px] text-stone-450">imagens</span>
                   </div>
                 </div>
@@ -484,7 +484,7 @@ export default function AdminPanel() {
                 <div className={`${cardStyleClass} p-5 rounded-2xl`}>
                   <span className="text-[10px] text-stone-400 uppercase tracking-widest font-light">Avaliações</span>
                   <div className="flex items-baseline gap-2 mt-2">
-                    <span className="font-serif text-2xl font-semibold text-stone-850 dark:text-stone-100">{testimonials.length}</span>
+                    <span className="font-serif text-2xl font-semibold text-stone-950 dark:text-stone-100">{testimonials.length}</span>
                     <span className="text-[10px] text-stone-450">comentários</span>
                   </div>
                 </div>
@@ -517,7 +517,7 @@ export default function AdminPanel() {
                   <div className="flex flex-col gap-3 overflow-y-auto max-h-[260px] pr-1">
                     {todayAppointments.length > 0 ? (
                       todayAppointments.map((appt) => (
-                        <div key={appt.id} className="p-3 bg-stone-50 dark:bg-stone-950 rounded-xl border border-stone-150 dark:border-stone-850 flex items-center justify-between gap-3">
+                        <div key={appt.id} className="p-3 bg-stone-50 dark:bg-stone-950 rounded-xl border border-stone-150 dark:border-stone-800 flex items-center justify-between gap-3">
                           <div>
                             <span className="font-semibold block text-stone-750 dark:text-stone-200 leading-snug">{appt.clientName}</span>
                             <span className="text-[9px] text-stone-400 uppercase tracking-widest mt-0.5 block">{appt.procedureName}</span>
@@ -548,7 +548,7 @@ export default function AdminPanel() {
               className={`${cardStyleClass} p-6 rounded-2xl flex flex-col`}
             >
               <div className="flex justify-between items-center mb-6">
-                <span className="font-serif text-sm font-semibold text-stone-850 dark:text-stone-200">Lista de Agendamentos</span>
+                <span className="font-serif text-sm font-semibold text-stone-950 dark:text-stone-200">Lista de Agendamentos</span>
                 <button
                   onClick={() => handleOpenAddModal("appointment")}
                   className={`px-4 py-2 bg-gold-500 hover:bg-gold-600 text-white font-semibold flex items-center gap-1.5 ${btnRadius} shadow-sm cursor-pointer`}
@@ -560,7 +560,7 @@ export default function AdminPanel() {
               <div className="overflow-x-auto w-full">
                 <table className="w-full text-left border-collapse min-w-[700px]">
                   <thead>
-                    <tr className="border-b border-stone-200 dark:border-stone-850 text-stone-400">
+                    <tr className="border-b border-stone-200 dark:border-stone-800 text-stone-400">
                       <th className="pb-3 font-medium">Paciente</th>
                       <th className="pb-3 font-medium">Contato</th>
                       <th className="pb-3 font-medium">Procedimento</th>
@@ -578,7 +578,7 @@ export default function AdminPanel() {
                       )
                       .map((appt) => (
                         <tr key={appt.id} className="text-stone-600 dark:text-stone-300">
-                          <td className="py-4 font-semibold text-stone-850 dark:text-stone-255">{appt.clientName}</td>
+                          <td className="py-4 font-semibold text-stone-950 dark:text-stone-200">{appt.clientName}</td>
                           <td className="py-4">{appt.clientPhone}</td>
                           <td className="py-4">{appt.procedureName}</td>
                           <td className="py-4">
@@ -636,7 +636,7 @@ export default function AdminPanel() {
               className={`${cardStyleClass} p-6 rounded-2xl flex flex-col`}
             >
               <div className="flex justify-between items-center mb-6">
-                <span className="font-serif text-sm font-semibold text-stone-850 dark:text-stone-200">Fichas Cadastrais</span>
+                <span className="font-serif text-sm font-semibold text-stone-950 dark:text-stone-200">Fichas Cadastrais</span>
                 <button
                   onClick={() => handleOpenAddModal("client")}
                   className={`px-4 py-2 bg-gold-500 hover:bg-gold-600 text-white font-semibold flex items-center gap-1.5 ${btnRadius} shadow-sm cursor-pointer`}
@@ -648,7 +648,7 @@ export default function AdminPanel() {
               <div className="overflow-x-auto w-full">
                 <table className="w-full text-left border-collapse min-w-[700px]">
                   <thead>
-                    <tr className="border-b border-stone-200 dark:border-stone-850 text-stone-400">
+                    <tr className="border-b border-stone-200 dark:border-stone-800 text-stone-400">
                       <th className="pb-3 font-medium">Nome do Paciente</th>
                       <th className="pb-3 font-medium">Telefone</th>
                       <th className="pb-3 font-medium">WhatsApp</th>
@@ -665,7 +665,7 @@ export default function AdminPanel() {
                       )
                       .map((client) => (
                         <tr key={client.id} className="text-stone-600 dark:text-stone-300">
-                          <td className="py-4 font-semibold text-stone-850 dark:text-stone-255">{client.name}</td>
+                          <td className="py-4 font-semibold text-stone-950 dark:text-stone-200">{client.name}</td>
                           <td className="py-4">{client.phone}</td>
                           <td className="py-4">{client.whatsapp}</td>
                           <td className="py-4">{client.email}</td>
@@ -732,7 +732,7 @@ export default function AdminPanel() {
               {gallerySubTab === "photos" ? (
                 <div className={`${cardStyleClass} p-6 rounded-2xl flex flex-col`}>
                   <div className="flex justify-between items-center mb-6">
-                    <span className="font-serif text-sm font-semibold text-stone-850 dark:text-stone-200">Portfólio de Fotos</span>
+                    <span className="font-serif text-sm font-semibold text-stone-950 dark:text-stone-200">Portfólio de Fotos</span>
                     <button
                       onClick={() => handleOpenAddModal("gallery")}
                       className={`px-4 py-2 bg-gold-500 hover:bg-gold-600 text-white font-semibold flex items-center gap-1.5 ${btnRadius} shadow-sm cursor-pointer`}
@@ -745,7 +745,7 @@ export default function AdminPanel() {
                     {gallery
                       .filter((g) => g.title.toLowerCase().includes(globalSearch.toLowerCase()))
                       .map((photo) => (
-                        <div key={photo.id} className="relative group rounded-xl overflow-hidden border border-stone-200 dark:border-stone-850 bg-stone-50 dark:bg-stone-950 aspect-video flex flex-col">
+                        <div key={photo.id} className="relative group rounded-xl overflow-hidden border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-950 aspect-video flex flex-col">
                           <img src={photo.image} alt={photo.title} className="w-full h-28 object-cover" />
                           <div className="p-3 flex justify-between items-center">
                             <div className="overflow-hidden mr-2">
@@ -766,7 +766,7 @@ export default function AdminPanel() {
               ) : (
                 <div className={`${cardStyleClass} p-6 rounded-2xl flex flex-col`}>
                   <div className="flex justify-between items-center mb-6">
-                    <span className="font-serif text-sm font-semibold text-stone-850 dark:text-stone-200">Comparativo Antes e Depois</span>
+                    <span className="font-serif text-sm font-semibold text-stone-950 dark:text-stone-200">Comparativo Antes e Depois</span>
                     <button
                       onClick={() => handleOpenAddModal("beforeAfter")}
                       className={`px-4 py-2 bg-gold-500 hover:bg-gold-600 text-white font-semibold flex items-center gap-1.5 ${btnRadius} shadow-sm cursor-pointer`}
@@ -779,7 +779,7 @@ export default function AdminPanel() {
                     {beforeAfter
                       .filter((b) => b.title.toLowerCase().includes(globalSearch.toLowerCase()))
                       .map((caseItem) => (
-                        <div key={caseItem.id} className="relative group rounded-xl overflow-hidden border border-stone-200 dark:border-stone-850 bg-stone-50 dark:bg-stone-950 flex flex-col">
+                        <div key={caseItem.id} className="relative group rounded-xl overflow-hidden border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-950 flex flex-col">
                           <div className="grid grid-cols-2 gap-0.5 bg-stone-200 dark:bg-stone-800">
                             <img src={caseItem.beforeImage} alt="Antes" className="w-full h-24 object-cover" />
                             <img src={caseItem.afterImage} alt="Depois" className="w-full h-24 object-cover" />
@@ -814,7 +814,7 @@ export default function AdminPanel() {
               className={`${cardStyleClass} p-6 rounded-2xl flex flex-col`}
             >
               <div className="flex justify-between items-center mb-6">
-                <span className="font-serif text-sm font-semibold text-stone-850 dark:text-stone-200">Catálogo de Procedimentos</span>
+                <span className="font-serif text-sm font-semibold text-stone-950 dark:text-stone-200">Catálogo de Procedimentos</span>
                 <button
                   onClick={() => handleOpenAddModal("procedure")}
                   className={`px-4 py-2 bg-gold-500 hover:bg-gold-600 text-white font-semibold flex items-center gap-1.5 ${btnRadius} shadow-sm cursor-pointer`}
@@ -826,7 +826,7 @@ export default function AdminPanel() {
               <div className="overflow-x-auto w-full">
                 <table className="w-full text-left border-collapse min-w-[700px]">
                   <thead>
-                    <tr className="border-b border-stone-200 dark:border-stone-850 text-stone-400">
+                    <tr className="border-b border-stone-200 dark:border-stone-800 text-stone-400">
                       <th className="pb-3 font-medium">Nome do Tratamento</th>
                       <th className="pb-3 font-medium">Categoria</th>
                       <th className="pb-3 font-medium">Duração</th>
@@ -840,7 +840,7 @@ export default function AdminPanel() {
                       .filter((p) => p.name.toLowerCase().includes(globalSearch.toLowerCase()))
                       .map((proc) => (
                         <tr key={proc.id} className="text-stone-600 dark:text-stone-300">
-                          <td className="py-4 font-semibold text-stone-850 dark:text-stone-255">{proc.name}</td>
+                          <td className="py-4 font-semibold text-stone-950 dark:text-stone-200">{proc.name}</td>
                           <td className="py-4 capitalize">{proc.category}</td>
                           <td className="py-4">{proc.duration} min</td>
                           <td className="py-4 text-right font-serif font-medium">
@@ -883,7 +883,7 @@ export default function AdminPanel() {
               className={`${cardStyleClass} p-6 rounded-2xl flex flex-col`}
             >
               <div className="flex justify-between items-center mb-6">
-                <span className="font-serif text-sm font-semibold text-stone-850 dark:text-stone-200">Depoimentos Moderação</span>
+                <span className="font-serif text-sm font-semibold text-stone-950 dark:text-stone-200">Depoimentos Moderação</span>
                 <button
                   onClick={() => handleOpenAddModal("testimonial")}
                   className={`px-4 py-2 bg-gold-500 hover:bg-gold-600 text-white font-semibold flex items-center gap-1.5 ${btnRadius} shadow-sm cursor-pointer`}
@@ -896,7 +896,7 @@ export default function AdminPanel() {
                 {testimonials
                   .filter((t) => t.name.toLowerCase().includes(globalSearch.toLowerCase()))
                   .map((test) => (
-                    <div key={test.id} className="p-5 bg-stone-50 dark:bg-stone-950 rounded-xl border border-stone-150 dark:border-stone-850/60 flex flex-col justify-between gap-4">
+                    <div key={test.id} className="p-5 bg-stone-50 dark:bg-stone-950 rounded-xl border border-stone-150 dark:border-stone-800/60 flex flex-col justify-between gap-4">
                       <div>
                         <div className="flex items-center justify-between mb-2">
                           <div className="flex items-center gap-0.5 text-gold-450">
@@ -940,7 +940,7 @@ export default function AdminPanel() {
               exit={{ opacity: 0, y: -10 }}
               className={`${cardStyleClass} p-6 rounded-2xl flex flex-col`}
             >
-              <span className="font-serif text-sm font-semibold text-stone-850 dark:text-stone-200 mb-6 pb-2 border-b border-stone-200/50 dark:border-stone-800/40">
+              <span className="font-serif text-sm font-semibold text-stone-950 dark:text-stone-200 mb-6 pb-2 border-b border-stone-200/50 dark:border-stone-800/40">
                 Dados Comerciais & Identidade
               </span>
 
@@ -953,7 +953,7 @@ export default function AdminPanel() {
                       type="text"
                       value={configForm.name}
                       onChange={(e) => setConfigForm({ ...configForm, name: e.target.value })}
-                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 dark:text-white"
+                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450 dark:text-white"
                     />
                   </div>
 
@@ -963,7 +963,7 @@ export default function AdminPanel() {
                       type="text"
                       value={configForm.slogan}
                       onChange={(e) => setConfigForm({ ...configForm, slogan: e.target.value })}
-                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 dark:text-white"
+                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450 dark:text-white"
                     />
                   </div>
 
@@ -973,7 +973,7 @@ export default function AdminPanel() {
                       type="text"
                       value={configForm.logoText}
                       onChange={(e) => setConfigForm({ ...configForm, logoText: e.target.value })}
-                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 dark:text-white"
+                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450 dark:text-white"
                     />
                   </div>
                 </div>
@@ -986,7 +986,7 @@ export default function AdminPanel() {
                       type="text"
                       value={configForm.phone}
                       onChange={(e) => setConfigForm({ ...configForm, phone: e.target.value })}
-                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 dark:text-white"
+                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450 dark:text-white"
                     />
                   </div>
 
@@ -996,7 +996,7 @@ export default function AdminPanel() {
                       type="text"
                       value={configForm.whatsapp}
                       onChange={(e) => setConfigForm({ ...configForm, whatsapp: e.target.value })}
-                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 dark:text-white"
+                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450 dark:text-white"
                     />
                   </div>
 
@@ -1006,7 +1006,7 @@ export default function AdminPanel() {
                       type="email"
                       value={configForm.email}
                       onChange={(e) => setConfigForm({ ...configForm, email: e.target.value })}
-                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 dark:text-white"
+                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450 dark:text-white"
                     />
                   </div>
                 </div>
@@ -1018,7 +1018,7 @@ export default function AdminPanel() {
                     type="text"
                     value={configForm.address}
                     onChange={(e) => setConfigForm({ ...configForm, address: e.target.value })}
-                    className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 dark:text-white"
+                    className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450 dark:text-white"
                   />
                 </div>
 
@@ -1028,7 +1028,7 @@ export default function AdminPanel() {
                     type="text"
                     value={configForm.googleMapsUrl}
                     onChange={(e) => setConfigForm({ ...configForm, googleMapsUrl: e.target.value })}
-                    className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 dark:text-white"
+                    className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450 dark:text-white"
                   />
                 </div>
 
@@ -1045,7 +1045,7 @@ export default function AdminPanel() {
                           workingHours: { ...configForm.workingHours, weekdays: e.target.value },
                         })
                       }
-                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 dark:text-white"
+                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450 dark:text-white"
                     />
                   </div>
 
@@ -1060,7 +1060,7 @@ export default function AdminPanel() {
                           workingHours: { ...configForm.workingHours, saturday: e.target.value },
                         })
                       }
-                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 dark:text-white"
+                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450 dark:text-white"
                     />
                   </div>
 
@@ -1075,7 +1075,7 @@ export default function AdminPanel() {
                           workingHours: { ...configForm.workingHours, sunday: e.target.value },
                         })
                       }
-                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 dark:text-white"
+                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450 dark:text-white"
                     />
                   </div>
                 </div>
@@ -1093,7 +1093,7 @@ export default function AdminPanel() {
                           seo: { ...configForm.seo, title: e.target.value },
                         })
                       }
-                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 dark:text-white"
+                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450 dark:text-white"
                     />
                   </div>
 
@@ -1108,7 +1108,7 @@ export default function AdminPanel() {
                           seo: { ...configForm.seo, description: e.target.value },
                         })
                       }
-                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 dark:text-white"
+                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450 dark:text-white"
                     />
                   </div>
                 </div>
@@ -1146,7 +1146,7 @@ export default function AdminPanel() {
                 </h3>
                 <button
                   onClick={() => setIsModalOpen(false)}
-                  className="p-1 rounded-full hover:bg-stone-100 dark:hover:bg-stone-850 text-stone-400"
+                  className="p-1 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-400"
                 >
                   <XCircle size={18} />
                 </button>

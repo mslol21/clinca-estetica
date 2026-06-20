@@ -19,7 +19,7 @@ export default function Blog() {
           <span className="text-[10px] uppercase tracking-[0.3em] font-semibold text-gold-500 dark:text-gold-400">
             Ciência, Beleza & Tendências
           </span>
-          <h1 className="font-serif text-4xl sm:text-5xl tracking-tight text-stone-850 dark:text-stone-100 mt-3 mb-6">
+          <h1 className="font-serif text-4xl sm:text-5xl tracking-tight text-stone-950 dark:text-stone-100 mt-3 mb-6">
             Blog - {clinicConfig.logoText || "Clínica"}
           </h1>
           <p className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 max-w-lg mx-auto font-light leading-relaxed">
@@ -111,13 +111,13 @@ export default function Blog() {
               className="w-full max-w-2xl bg-white dark:bg-stone-900 h-full overflow-y-auto shadow-2xl flex flex-col border-l border-stone-200 dark:border-stone-800 text-stone-800 dark:text-stone-155"
             >
               {/* Close Bar */}
-              <div className="sticky top-0 bg-white/90 dark:bg-stone-900/90 backdrop-blur-md px-6 py-4 flex items-center justify-between border-b border-stone-100 dark:border-stone-850 z-20">
+              <div className="sticky top-0 bg-white/90 dark:bg-stone-900/90 backdrop-blur-md px-6 py-4 flex items-center justify-between border-b border-stone-100 dark:border-stone-800 z-20">
                 <span className="font-serif text-xs uppercase tracking-widest text-gold-500 font-semibold flex items-center gap-2">
                   <BookOpen size={14} /> Artigo - {clinicConfig.logoText || "Clínica"}
                 </span>
                 <button
                   onClick={() => setActiveSlug(null)}
-                  className="p-1.5 rounded-full hover:bg-stone-100 dark:hover:bg-stone-850 text-stone-400 hover:text-stone-600 transition-colors"
+                  className="p-1.5 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-400 hover:text-stone-600 transition-colors"
                 >
                   <X size={18} />
                 </button>
@@ -154,7 +154,7 @@ export default function Blog() {
                   </span>
                 </div>
 
-                <h2 className="font-serif text-2xl sm:text-3xl text-stone-850 dark:text-stone-100 leading-tight mb-8 font-medium">
+                <h2 className="font-serif text-2xl sm:text-3xl text-stone-950 dark:text-stone-100 leading-tight mb-8 font-medium">
                   {activePost.title}
                 </h2>
 

@@ -64,7 +64,7 @@ export const FloatingWhatsApp: React.FC = () => {
             animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 50, x: -50 }}
             transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            className="absolute bottom-16 left-0 w-80 bg-white dark:bg-stone-900 border border-stone-200/50 dark:border-stone-850/50 rounded-2xl shadow-2xl overflow-hidden z-50 text-stone-800 dark:text-stone-150"
+            className="absolute bottom-16 left-0 w-80 bg-white dark:bg-stone-900 border border-stone-200/50 dark:border-stone-800/50 rounded-2xl shadow-2xl overflow-hidden z-50 text-stone-800 dark:text-stone-150"
           >
             {/* Header */}
             <div className="bg-gradient-to-r from-stone-900 to-stone-800 dark:from-stone-950 dark:to-stone-900 px-4 py-4 text-white flex items-center justify-between border-b border-gold-500/20">
@@ -117,7 +117,7 @@ export const FloatingWhatsApp: React.FC = () => {
             {/* Input Form */}
             <form
               onSubmit={handleSend}
-              className="p-3 bg-white dark:bg-stone-900 border-t border-stone-100 dark:border-stone-850 flex items-center gap-2 font-sans"
+              className="p-3 bg-white dark:bg-stone-900 border-t border-stone-100 dark:border-stone-800 flex items-center gap-2 font-sans"
             >
               <input
                 type="text"

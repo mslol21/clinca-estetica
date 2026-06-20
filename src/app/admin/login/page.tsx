@@ -50,7 +50,7 @@ export default function AdminLogin() {
           <div className="inline-flex w-14 h-14 bg-gradient-to-tr from-gold-500 to-gold-300 items-center justify-center rounded-full border border-gold-400/30 text-white shadow-xl shadow-gold-500/5 mb-4">
             <span className="font-serif text-2xl font-light">L</span>
           </div>
-          <h2 className="font-serif text-2xl tracking-[0.2em] uppercase text-stone-850 dark:text-stone-100">
+          <h2 className="font-serif text-2xl tracking-[0.2em] uppercase text-stone-950 dark:text-stone-100">
             Painel Concierge
           </h2>
           <p className="text-[10px] tracking-[0.1em] uppercase text-stone-500 dark:text-stone-400 font-light mt-1">

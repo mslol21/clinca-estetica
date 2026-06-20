@@ -155,7 +155,7 @@ export const Footer: React.FC = () => {
         </div>
 
         {/* Footer Bottom */}
-        <div className="mt-16 pt-8 border-t border-stone-200/50 dark:border-stone-850/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="mt-16 pt-8 border-t border-stone-200/50 dark:border-stone-800/50 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-[10px] text-stone-400 dark:text-stone-550 font-light">
             &copy; {new Date().getFullYear()} {clinicConfig.name}. Todos os direitos reservados.
           </p>

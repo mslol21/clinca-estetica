@@ -76,10 +76,10 @@ export const Header: React.FC = () => {
               />
             ) : (
               <div className="flex flex-col">
-                <span className="font-serif text-xl tracking-[0.25em] uppercase text-stone-850 dark:text-stone-100 font-medium">
+                <span className="font-serif text-xl tracking-[0.25em] uppercase text-stone-950 dark:text-stone-100 font-medium">
                   {clinicConfig.logoText || clinicConfig.name}
                 </span>
-                <span className="text-[9px] tracking-[0.2em] uppercase text-stone-500 dark:text-stone-400 font-light -mt-0.5">
+                <span className="text-[9px] tracking-[0.2em] uppercase text-stone-700 dark:text-stone-400 font-light -mt-0.5">
                   Premium Concept
                 </span>
               </div>
@@ -97,7 +97,7 @@ export const Header: React.FC = () => {
                   className={`text-xs uppercase tracking-widest font-medium transition-colors hover:text-gold-500 dark:hover:text-gold-400 ${
                     isActive
                       ? "text-gold-500 dark:text-gold-400 font-semibold"
-                      : "text-stone-600 dark:text-stone-300"
+                      : "text-stone-900 dark:text-stone-300"
                   }`}
                 >
                   {link.name}
