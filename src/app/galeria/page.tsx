@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ZoomIn, ZoomOut, Maximize2, Sparkles } from "lucide-react";
 import { useDatabase } from "@/context/DatabaseContext";
+import { themeConfig } from "@/config/theme-config";
 
 export default function Galeria() {
   const { gallery } = useDatabase();
@@ -39,6 +40,22 @@ export default function Galeria() {
   const zoomIn = () => setZoomScale((prev) => Math.min(prev + 0.25, 2.5));
   const zoomOut = () => setZoomScale((prev) => Math.max(prev - 0.25, 0.75));
 
+  // Dynamic border radius for buttons
+  const btnRadius =
+    themeConfig.styles.button === "pill"
+      ? "rounded-full"
+      : themeConfig.styles.button === "rounded"
+      ? "rounded-xl"
+      : "rounded-none";
+
+  // Dynamic style for cards
+  const cardStyleClass =
+    themeConfig.styles.card === "glass"
+      ? "glass-card"
+      : themeConfig.styles.card === "bordered"
+      ? "bg-white dark:bg-stone-900 border border-stone-200/60 dark:border-stone-800/40"
+      : "bg-white dark:bg-stone-900 shadow-xl shadow-stone-500/5 dark:shadow-none border border-transparent";
+
   return (
     <div className="relative pt-12 pb-20 overflow-hidden">
       {/* Header */}
@@ -64,7 +81,7 @@ export default function Galeria() {
               <button
                 key={f.id}
                 onClick={() => setSelectedFilter(f.id as any)}
-                className={`px-5 py-2 rounded-full text-xs uppercase tracking-widest font-semibold transition-all ${
+                className={`px-5 py-2 ${btnRadius} text-xs uppercase tracking-widest font-semibold transition-all ${
                   selectedFilter === f.id
                     ? "bg-gradient-to-r from-gold-500 to-gold-400 text-white shadow-lg shadow-gold-500/10"
                     : "text-stone-500 hover:text-stone-850 dark:text-stone-400 dark:hover:text-stone-200 bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800"
@@ -93,7 +110,7 @@ export default function Galeria() {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.4 }}
-                  className="bg-white dark:bg-stone-900 rounded-2xl overflow-hidden border border-stone-200/50 dark:border-stone-800/30 shadow-lg shadow-stone-500/5 group relative cursor-pointer"
+                  className={`${cardStyleClass} rounded-2xl overflow-hidden group relative cursor-pointer`}
                   onClick={() => handleOpenLightbox(photo.id)}
                 >
                   <div className="aspect-[4/3] w-full relative overflow-hidden">

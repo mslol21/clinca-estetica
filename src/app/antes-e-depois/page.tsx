@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, Calendar, Clock, Star } from "lucide-react";
 import { useDatabase } from "@/context/DatabaseContext";
 import { BeforeAfterSlider } from "@/components/site/BeforeAfterSlider";
+import { themeConfig } from "@/config/theme-config";
 
 export default function AntesEDepois() {
   const { beforeAfter } = useDatabase();
@@ -22,6 +23,22 @@ export default function AntesEDepois() {
     selectedFilter === "todos"
       ? beforeAfter
       : beforeAfter.filter((item) => item.category === selectedFilter);
+
+  // Dynamic border radius for buttons
+  const btnRadius =
+    themeConfig.styles.button === "pill"
+      ? "rounded-full"
+      : themeConfig.styles.button === "rounded"
+      ? "rounded-xl"
+      : "rounded-none";
+
+  // Dynamic style for cards
+  const cardStyleClass =
+    themeConfig.styles.card === "glass"
+      ? "glass-card"
+      : themeConfig.styles.card === "bordered"
+      ? "bg-white dark:bg-stone-900 border border-stone-200/60 dark:border-stone-800/40"
+      : "bg-white dark:bg-stone-900 shadow-xl shadow-stone-500/5 dark:shadow-none border border-transparent";
 
   return (
     <div className="relative pt-12 pb-20 overflow-hidden">
@@ -48,7 +65,7 @@ export default function AntesEDepois() {
               <button
                 key={f.id}
                 onClick={() => setSelectedFilter(f.id as any)}
-                className={`px-5 py-2.5 rounded-full text-xs uppercase tracking-widest font-semibold transition-all ${
+                className={`px-5 py-2.5 ${btnRadius} text-xs uppercase tracking-widest font-semibold transition-all ${
                   selectedFilter === f.id
                     ? "bg-gradient-to-r from-gold-500 to-gold-400 text-white shadow-lg shadow-gold-500/10"
                     : "text-stone-500 hover:text-stone-850 dark:text-stone-400 dark:hover:text-stone-200 bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800"
@@ -75,7 +92,7 @@ export default function AntesEDepois() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ duration: 0.5 }}
-                    className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center bg-white dark:bg-stone-900 p-6 md:p-10 rounded-3xl border border-stone-200/50 dark:border-stone-800/30 shadow-xl shadow-stone-500/5"
+                    className={`grid grid-cols-1 lg:grid-cols-12 gap-12 items-center ${cardStyleClass} p-6 md:p-10 rounded-3xl`}
                   >
                     {/* Slider Column */}
                     <div className={`lg:col-span-6 ${!isEven ? "lg:order-2" : ""}`}>

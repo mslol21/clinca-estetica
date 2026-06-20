@@ -1,13 +1,18 @@
 @import "tailwindcss";
 
 @theme {
+  --color-primary: var(--luxe-primary);
+  --color-secondary: var(--luxe-secondary);
+  --color-accent: var(--luxe-accent);
+
+  /* Maintain backward compatibility with existing layout files while making colors dynamic */
   --color-gold-50: #faf6f0;
   --color-gold-100: #f3ebe1;
   --color-gold-200: #e8d9c7;
-  --color-gold-300: #d8bf9e;
-  --color-gold-400: #c5a880;
-  --color-gold-500: #b0926a;
-  --color-gold-600: #927650;
+  --color-gold-300: var(--luxe-accent);
+  --color-gold-400: var(--luxe-primary);
+  --color-gold-500: var(--luxe-secondary);
+  --color-gold-600: var(--luxe-secondary);
   --color-gold-700: #776041;
   --color-gold-800: #5d4b33;
   --color-gold-900: #423525;
@@ -27,21 +32,21 @@
 }
 
 :root {
-  --background: #fafafa;
+  --background: var(--luxe-bg-light);
   --foreground: #1c1917;
   --card: #ffffff;
   --card-foreground: #1c1917;
   --border: #f3ebe1;
-  --ring: #c5a880;
+  --ring: var(--luxe-primary);
 }
 
 .dark {
-  --background: #110e0c;
+  --background: var(--luxe-bg-dark);
   --foreground: #faf8f5;
   --card: #181512;
   --card-foreground: #faf8f5;
   --border: #251e15;
-  --ring: #b0926a;
+  --ring: var(--luxe-secondary);
 }
 
 body {
@@ -61,11 +66,11 @@ body {
 }
 
 .gold-accent-gradient {
-  background: linear-gradient(135deg, #e8d9c7 0%, #c5a880 50%, #b0926a 100%);
+  background: linear-gradient(135deg, var(--luxe-accent) 0%, var(--luxe-primary) 50%, var(--luxe-secondary) 100%);
 }
 
 .gold-text-gradient {
-  background: linear-gradient(135deg, #b0926a 0%, #d4af37 50%, #c5a880 100%);
+  background: linear-gradient(135deg, var(--luxe-secondary) 0%, #d4af37 50%, var(--luxe-primary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }

@@ -1,23 +1,19 @@
 import {
   INITIAL_PROCEDURES,
-  INITIAL_PROFESSIONALS,
   INITIAL_CLIENTS,
   INITIAL_APPOINTMENTS,
   INITIAL_GALLERY,
   INITIAL_BEFORE_AFTER,
   INITIAL_TESTIMONIALS,
   INITIAL_BLOG,
-  INITIAL_FINANCIAL,
   DEFAULT_CLINIC_CONFIG,
   Procedure,
-  Professional,
   Client,
   Appointment,
   GalleryItem,
   BeforeAfterItem,
   Testimonial,
   BlogPost,
-  FinancialRecord,
   ClinicConfig,
 } from "./mockData";
 
@@ -85,21 +81,6 @@ export const dbService = {
     setLocal("appointments", list);
   },
 
-  // Professionals
-  getProfessionals: (): Professional[] =>
-    getLocal("professionals", INITIAL_PROFESSIONALS),
-  saveProfessional: (item: Professional) => {
-    const list = dbService.getProfessionals();
-    const index = list.findIndex((p) => p.id === item.id);
-    if (index >= 0) list[index] = item;
-    else list.push(item);
-    setLocal("professionals", list);
-  },
-  deleteProfessional: (id: string) => {
-    const list = dbService.getProfessionals().filter((p) => p.id !== id);
-    setLocal("professionals", list);
-  },
-
   // Gallery
   getGallery: (): GalleryItem[] => getLocal("gallery", INITIAL_GALLERY),
   saveGalleryItem: (item: GalleryItem) => {
@@ -156,21 +137,6 @@ export const dbService = {
   deleteBlogPost: (id: string) => {
     const list = dbService.getBlogPosts().filter((b) => b.id !== id);
     setLocal("blog", list);
-  },
-
-  // Financial
-  getFinancialRecords: (): FinancialRecord[] =>
-    getLocal("financial", INITIAL_FINANCIAL),
-  saveFinancialRecord: (item: FinancialRecord) => {
-    const list = dbService.getFinancialRecords();
-    const index = list.findIndex((f) => f.id === item.id);
-    if (index >= 0) list[index] = item;
-    else list.push(item);
-    setLocal("financial", list);
-  },
-  deleteFinancialRecord: (id: string) => {
-    const list = dbService.getFinancialRecords().filter((f) => f.id !== id);
-    setLocal("financial", list);
   },
 
   // Clinic Config

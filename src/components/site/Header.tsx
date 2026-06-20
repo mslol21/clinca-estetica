@@ -5,11 +5,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Sun, Moon, Menu, X, Calendar } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useDatabase } from "@/context/DatabaseContext";
+import { clinicConfig } from "@/config/clinic-config";
+import { themeConfig } from "@/config/theme-config";
 
 export const Header: React.FC = () => {
   const pathname = usePathname();
-  const { clinicConfig } = useDatabase();
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -50,6 +50,14 @@ export const Header: React.FC = () => {
     { name: "Contato", path: "/contato" },
   ];
 
+  // Helper for dynamic button radius
+  const btnRadiusClass =
+    themeConfig.styles.button === "pill"
+      ? "rounded-full"
+      : themeConfig.styles.button === "rounded"
+      ? "rounded-xl"
+      : "rounded-none";
+
   // Don't show header in admin dashboard paths
   if (pathname?.startsWith("/admin")) return null;
 
@@ -65,8 +73,8 @@ export const Header: React.FC = () => {
         <div className="flex items-center justify-between">
           {/* Brand Logo */}
           <Link href="/" className="flex flex-col select-none">
-            <span className="font-serif text-xl tracking-[0.25em] uppercase text-stone-800 dark:text-stone-100 font-medium">
-              Luxe Estética
+            <span className="font-serif text-xl tracking-[0.25em] uppercase text-stone-850 dark:text-stone-100 font-medium">
+              {clinicConfig.logoText || clinicConfig.name}
             </span>
             <span className="text-[9px] tracking-[0.2em] uppercase text-stone-500 dark:text-stone-400 font-light -mt-0.5">
               Premium Concept
@@ -107,7 +115,7 @@ export const Header: React.FC = () => {
             {/* Appointment Booking button */}
             <Link
               href="/agendamento"
-              className="flex items-center gap-2 text-xs uppercase tracking-widest font-semibold px-5 py-2.5 bg-gradient-to-r from-gold-500 to-gold-400 hover:from-gold-600 hover:to-gold-500 text-white rounded-full shadow-lg shadow-gold-500/10 hover:shadow-gold-500/20 transform hover:-translate-y-0.5 transition-all duration-200"
+              className={`flex items-center gap-2 text-xs uppercase tracking-widest font-semibold px-5 py-2.5 bg-gradient-to-r from-gold-500 to-gold-400 hover:from-gold-600 hover:to-gold-500 text-white shadow-lg shadow-gold-500/10 hover:shadow-gold-500/20 transform hover:-translate-y-0.5 transition-all duration-200 ${btnRadiusClass}`}
             >
               <Calendar size={14} />
               Agendar Avaliação
@@ -165,7 +173,7 @@ export const Header: React.FC = () => {
               <Link
                 href="/agendamento"
                 onClick={() => setMobileMenuOpen(false)}
-                className="mt-2 flex items-center justify-center gap-2 text-xs uppercase tracking-widest font-semibold py-3 bg-gradient-to-r from-gold-500 to-gold-400 text-white rounded-full shadow-lg"
+                className={`mt-2 flex items-center justify-center gap-2 text-xs uppercase tracking-widest font-semibold py-3 bg-gradient-to-r from-gold-500 to-gold-400 text-white shadow-lg ${btnRadiusClass}`}
               >
                 <Calendar size={14} />
                 Agendar Avaliação

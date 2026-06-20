@@ -4,27 +4,23 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { dbService } from "@/services/dbService";
 import {
   Procedure,
-  Professional,
   Client,
   Appointment,
   GalleryItem,
   BeforeAfterItem,
   Testimonial,
   BlogPost,
-  FinancialRecord,
   ClinicConfig,
 } from "@/services/mockData";
 
 interface DatabaseContextProps {
   procedures: Procedure[];
-  professionals: Professional[];
   clients: Client[];
   appointments: Appointment[];
   gallery: GalleryItem[];
   beforeAfter: BeforeAfterItem[];
   testimonials: Testimonial[];
   blogPosts: BlogPost[];
-  financialRecords: FinancialRecord[];
   clinicConfig: ClinicConfig;
   loading: boolean;
 
@@ -36,8 +32,6 @@ interface DatabaseContextProps {
   deleteClient: (id: string) => void;
   saveAppointment: (item: Appointment) => void;
   deleteAppointment: (id: string) => void;
-  saveProfessional: (item: Professional) => void;
-  deleteProfessional: (id: string) => void;
   saveGalleryItem: (item: GalleryItem) => void;
   deleteGalleryItem: (id: string) => void;
   saveBeforeAfterItem: (item: BeforeAfterItem) => void;
@@ -46,8 +40,6 @@ interface DatabaseContextProps {
   deleteTestimonial: (id: string) => void;
   saveBlogPost: (item: BlogPost) => void;
   deleteBlogPost: (id: string) => void;
-  saveFinancialRecord: (item: FinancialRecord) => void;
-  deleteFinancialRecord: (id: string) => void;
   saveClinicConfig: (item: ClinicConfig) => void;
 }
 
@@ -57,27 +49,23 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [procedures, setProcedures] = useState<Procedure[]>([]);
-  const [professionals, setProfessionals] = useState<Professional[]>([]);
   const [clients, setClients] = useState<Client[]>([]);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [gallery, setGallery] = useState<GalleryItem[]>([]);
   const [beforeAfter, setBeforeAfter] = useState<BeforeAfterItem[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
-  const [financialRecords, setFinancialRecords] = useState<FinancialRecord[]>([]);
   const [clinicConfig, setClinicConfig] = useState<ClinicConfig | null>(null);
   const [loading, setLoading] = useState(true);
 
   const loadAllData = () => {
     setProcedures(dbService.getProcedures());
-    setProfessionals(dbService.getProfessionals());
     setClients(dbService.getClients());
     setAppointments(dbService.getAppointments());
     setGallery(dbService.getGallery());
     setBeforeAfter(dbService.getBeforeAfter());
     setTestimonials(dbService.getTestimonials());
     setBlogPosts(dbService.getBlogPosts());
-    setFinancialRecords(dbService.getFinancialRecords());
     setClinicConfig(dbService.getClinicConfig());
     setLoading(false);
   };
@@ -108,28 +96,38 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({
     <DatabaseContext.Provider
       value={{
         procedures,
-        professionals,
         clients,
         appointments,
         gallery,
         beforeAfter,
         testimonials,
         blogPosts,
-        financialRecords,
         clinicConfig: clinicConfig || {
           name: "Carregando...",
-          tagline: "",
+          slogan: "",
+          logoText: "",
           phone: "",
           whatsapp: "",
           email: "",
           address: "",
           workingHours: { weekdays: "", saturday: "", sunday: "" },
           googleMapsUrl: "",
-          instagram: "",
-          facebook: "",
-          youtube: "",
-          googleAnalyticsId: "",
-          metaPixelId: "",
+          social: { instagram: "", facebook: "", youtube: "" },
+          seo: { title: "", description: "", keywords: [], ogImage: "" },
+          integrations: { googleAnalyticsId: "", metaPixelId: "" },
+          about: {
+            essence: "",
+            storyTitle: "",
+            storyYearText: "",
+            storySubtitle: "",
+            storyParagraphs: [],
+            mission: "",
+            vision: "",
+            values: "",
+            infraTag: "",
+            infraTitle: "",
+            infraParagraphs: [],
+          },
         },
         loading,
         refreshData,
@@ -139,8 +137,6 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({
         deleteClient: wrapDelete(dbService.deleteClient),
         saveAppointment: wrapAction(dbService.saveAppointment),
         deleteAppointment: wrapDelete(dbService.deleteAppointment),
-        saveProfessional: wrapAction(dbService.saveProfessional),
-        deleteProfessional: wrapDelete(dbService.deleteProfessional),
         saveGalleryItem: wrapAction(dbService.saveGalleryItem),
         deleteGalleryItem: wrapDelete(dbService.deleteGalleryItem),
         saveBeforeAfterItem: wrapAction(dbService.saveBeforeAfterItem),
@@ -149,8 +145,6 @@ export const DatabaseProvider: React.FC<{ children: React.ReactNode }> = ({
         deleteTestimonial: wrapDelete(dbService.deleteTestimonial),
         saveBlogPost: wrapAction(dbService.saveBlogPost),
         deleteBlogPost: wrapDelete(dbService.deleteBlogPost),
-        saveFinancialRecord: wrapAction(dbService.saveFinancialRecord),
-        deleteFinancialRecord: wrapDelete(dbService.deleteFinancialRecord),
         saveClinicConfig: (config: ClinicConfig) => {
           dbService.saveClinicConfig(config);
           loadAllData();

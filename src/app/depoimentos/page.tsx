@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Star, MessageSquare, Plus, PenTool, X, Check } from "lucide-react";
 import { useDatabase } from "@/context/DatabaseContext";
 import { useToast } from "@/components/ui/Toast";
+import { themeConfig } from "@/config/theme-config";
 
 export default function Depoimentos() {
   const { testimonials, saveTestimonial } = useDatabase();
@@ -47,6 +48,22 @@ export default function Depoimentos() {
   const totalReviews = testimonials.length + 125; // mock baseline
   const ratingSum = testimonials.reduce((acc, t) => acc + t.rating, 0) + (125 * 4.9);
   const averageRating = (ratingSum / totalReviews).toFixed(1);
+
+  // Dynamic border radius for buttons
+  const btnRadius =
+    themeConfig.styles.button === "pill"
+      ? "rounded-full"
+      : themeConfig.styles.button === "rounded"
+      ? "rounded-xl"
+      : "rounded-none";
+
+  // Dynamic style for cards
+  const cardStyleClass =
+    themeConfig.styles.card === "glass"
+      ? "glass-card"
+      : themeConfig.styles.card === "bordered"
+      ? "bg-white dark:bg-stone-900 border border-stone-200/60 dark:border-stone-800/40"
+      : "bg-white dark:bg-stone-900 shadow-xl shadow-stone-500/5 dark:shadow-none border border-transparent";
 
   return (
     <div className="relative pt-12 pb-20 overflow-hidden">
@@ -94,7 +111,7 @@ export default function Depoimentos() {
           {/* Add testimonial button */}
           <button
             onClick={() => setFormOpen(true)}
-            className="flex items-center gap-2 text-xs uppercase tracking-widest font-semibold px-6 py-3.5 bg-gradient-to-r from-gold-500 to-gold-400 hover:from-gold-600 hover:to-gold-500 text-white rounded-full shadow-lg shadow-gold-500/10 hover:shadow-gold-500/25 transition-all cursor-pointer"
+            className={`flex items-center gap-2 text-xs uppercase tracking-widest font-semibold px-6 py-3.5 bg-gradient-to-r from-gold-500 to-gold-400 hover:from-gold-600 hover:to-gold-500 text-white ${btnRadius} shadow-lg shadow-gold-500/10 hover:shadow-gold-500/25 transition-all cursor-pointer`}
           >
             <PenTool size={14} />
             Escrever Avaliação
@@ -112,7 +129,7 @@ export default function Depoimentos() {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="bg-white dark:bg-stone-900 p-8 rounded-2xl shadow-xl shadow-stone-500/5 border border-stone-200/50 dark:border-stone-800/30 flex flex-col justify-between"
+                className={`${cardStyleClass} p-8 rounded-2xl flex flex-col justify-between`}
               >
                 <div>
                   <div className="flex items-center justify-between mb-5">
@@ -259,7 +276,7 @@ export default function Depoimentos() {
                 {/* Submit button */}
                 <button
                   type="submit"
-                  className="mt-4 py-3.5 bg-gradient-to-r from-gold-500 to-gold-400 hover:from-gold-600 hover:to-gold-500 text-white rounded-xl font-semibold uppercase tracking-widest text-center shadow-lg transition-colors cursor-pointer"
+                  className={`mt-4 py-3.5 bg-gradient-to-r from-gold-500 to-gold-400 hover:from-gold-600 hover:to-gold-500 text-white ${btnRadius} font-semibold uppercase tracking-widest text-center shadow-lg transition-colors cursor-pointer`}
                 >
                   Enviar Avaliação
                 </button>

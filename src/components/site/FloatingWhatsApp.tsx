@@ -1,17 +1,18 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { MessageSquare, X, Send, Award } from "lucide-react";
+import { MessageSquare, X, Send } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useDatabase } from "@/context/DatabaseContext";
+import { clinicConfig } from "@/config/clinic-config";
+import { usePathname } from "next/navigation";
 
 export const FloatingWhatsApp: React.FC = () => {
-  const { clinicConfig } = useDatabase();
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
 
-  // Simulate clinic assistant typing shortly after opening
+  // Simulate assistant typing shortly after opening
   useEffect(() => {
     if (isOpen) {
       setIsTyping(true);
@@ -34,6 +35,9 @@ export const FloatingWhatsApp: React.FC = () => {
     setMessage("");
     setIsOpen(false);
   };
+
+  // Hide on admin panel
+  if (pathname?.startsWith("/admin")) return null;
 
   return (
     <div className="fixed bottom-6 left-6 z-[9990] select-none">
@@ -66,12 +70,14 @@ export const FloatingWhatsApp: React.FC = () => {
               <div className="flex items-center gap-3">
                 {/* Assistant Avatar */}
                 <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-gold-500 to-gold-300 flex items-center justify-center border border-white/20 relative">
-                  <span className="font-serif text-sm font-light text-stone-900">L</span>
+                  <span className="font-serif text-sm font-light text-stone-900">
+                    {clinicConfig.logoText?.[0] || "L"}
+                  </span>
                   <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border border-white dark:border-stone-900 rounded-full" />
                 </div>
                 <div>
                   <h4 className="font-serif text-xs font-semibold uppercase tracking-wider text-gold-400">
-                    Luxe Estética
+                    {clinicConfig.name}
                   </h4>
                   <p className="text-[9px] text-stone-400 font-light">Online • Concierge</p>
                 </div>
@@ -88,13 +94,13 @@ export const FloatingWhatsApp: React.FC = () => {
             <div className="h-44 p-4 bg-stone-50 dark:bg-stone-950 overflow-y-auto flex flex-col gap-3 font-sans">
               <div className="bg-white dark:bg-stone-900 p-3 rounded-2xl rounded-tl-none shadow-sm border border-stone-100 dark:border-stone-900/50 max-w-[90%] self-start">
                 <p className="text-xs leading-relaxed font-light">
-                  Olá! Seja muito bem-vinda à Luxe Estética Premium. ✨
+                  Olá! Seja muito bem-vinda à {clinicConfig.name}. ✨
                 </p>
               </div>
 
               <div className="bg-white dark:bg-stone-900 p-3 rounded-2xl rounded-tl-none shadow-sm border border-stone-100 dark:border-stone-900/50 max-w-[90%] self-start">
                 <p className="text-xs leading-relaxed font-light">
-                  Eu sou a Concierge Virtual da clínica. Como posso auxiliar em sua jornada de beleza e bem-estar hoje?
+                  Eu sou a Concierge Virtual da clínica. Como posso ajudar você hoje?
                 </p>
               </div>
 

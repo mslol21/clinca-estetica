@@ -2,11 +2,21 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Sparkles, Heart, Award, Shield } from "lucide-react";
+import { Sparkles, Heart, Shield } from "lucide-react";
 import { useDatabase } from "@/context/DatabaseContext";
+import { themeConfig } from "@/config/theme-config";
 
 export default function Sobre() {
   const { clinicConfig } = useDatabase();
+  const about = clinicConfig.about;
+
+  // Dynamic style for cards
+  const cardStyleClass =
+    themeConfig.styles.card === "glass"
+      ? "glass-card"
+      : themeConfig.styles.card === "bordered"
+      ? "bg-white dark:bg-stone-900 border border-stone-200/60 dark:border-stone-800/40"
+      : "bg-white dark:bg-stone-900 shadow-xl shadow-stone-500/5 dark:shadow-none border border-transparent";
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -31,13 +41,13 @@ export default function Sobre() {
       <section className="relative py-20 bg-stone-100 dark:bg-stone-900/30 transition-colors text-center">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <span className="text-[10px] uppercase tracking-[0.3em] font-semibold text-gold-500 dark:text-gold-400">
-            Nossa Essência
+            {about?.essence ? "Nossa Essência" : "Sobre Nós"}
           </span>
           <h1 className="font-serif text-4xl sm:text-5xl tracking-tight text-stone-850 dark:text-stone-100 mt-3 mb-6">
-            Sobre a Luxe Estética
+            Sobre a {clinicConfig.name}
           </h1>
           <p className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 max-w-lg mx-auto font-light leading-relaxed">
-            Uma clínica boutique idealizada para oferecer o máximo em sofisticação, segurança clínica e resultados estéticos personalizados.
+            {about?.essence || clinicConfig.slogan}
           </p>
         </div>
       </section>
@@ -48,21 +58,19 @@ export default function Sobre() {
           {/* Story Text */}
           <div className="lg:col-span-6 flex flex-col items-start text-left">
             <span className="text-[9px] uppercase tracking-[0.25em] font-semibold text-gold-550 block mb-2">
-              Desde 2016
+              {about?.storyYearText || "Nossa Trajetória"}
             </span>
             <h2 className="font-serif text-2xl sm:text-3xl tracking-tight text-stone-800 dark:text-stone-150 mb-6 font-medium">
-              Uma história guiada pelo amor à beleza natural e à ciência
+              {about?.storyTitle || "Uma história guiada pela beleza e pela ciência"}
             </h2>
             <div className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 space-y-4 font-light leading-relaxed">
-              <p>
-                A Luxe Estética Premium nasceu em 2016 da visão da Dra. Beatriz Calisto, que percebeu no mercado a necessidade de uma clínica estética que integrasse a segurança e ética da medicina dermatológica ao acolhimento personalizado de um concierge de luxo.
-              </p>
-              <p>
-                Iniciamos como um pequeno consultório e, em poucos anos, nos tornamos referência na região da Faria Lima em tratamentos estéticos não-invasivos. Nosso diferencial reside no compromisso inegociável de manter a individualidade de cada paciente, combatendo os exageros e entregando rejuvenescimento que harmoniza com as características originais.
-              </p>
-              <p>
-                Hoje, contamos com uma equipe multidisciplinar capacitada nas tecnologias mais consagradas do mundo, proporcionando protocolos individualizados sob rigorosos critérios científicos.
-              </p>
+              {about?.storyParagraphs ? (
+                about.storyParagraphs.map((para, i) => (
+                  <p key={i}>{para}</p>
+                ))
+              ) : (
+                <p>Carregando história da clínica...</p>
+              )}
             </div>
           </div>
 
@@ -103,7 +111,7 @@ export default function Sobre() {
             {/* Mission */}
             <motion.div
               variants={itemVariants}
-              className="bg-white dark:bg-stone-900 p-8 rounded-2xl border border-stone-200/40 dark:border-stone-800/40 shadow-xl shadow-stone-500/5 flex flex-col items-start"
+              className={`${cardStyleClass} p-8 rounded-2xl flex flex-col items-start`}
             >
               <div className="w-10 h-10 rounded-lg bg-gold-100/50 dark:bg-gold-950/20 flex items-center justify-center text-gold-550 mb-5">
                 <Heart size={20} />
@@ -112,14 +120,14 @@ export default function Sobre() {
                 Nossa Missão
               </h3>
               <p className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed font-light">
-                Proporcionar bem-estar, autoestima e rejuvenescimento saudável através de procedimentos estéticos de alta performance, com ética, segurança e total personalização.
+                {about?.mission || "Proporcionar bem-estar, autoestima e rejuvenescimento saudável através de procedimentos estéticos."}
               </p>
             </motion.div>
 
             {/* Vision */}
             <motion.div
               variants={itemVariants}
-              className="bg-white dark:bg-stone-900 p-8 rounded-2xl border border-stone-200/40 dark:border-stone-800/40 shadow-xl shadow-stone-500/5 flex flex-col items-start"
+              className={`${cardStyleClass} p-8 rounded-2xl flex flex-col items-start`}
             >
               <div className="w-10 h-10 rounded-lg bg-gold-100/50 dark:bg-gold-950/20 flex items-center justify-center text-gold-550 mb-5">
                 <Sparkles size={20} />
@@ -128,14 +136,14 @@ export default function Sobre() {
                 Nossa Visão
               </h3>
               <p className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed font-light">
-                Ser reconhecida nacionalmente como a principal marca boutique de estética premium, liderando em tecnologia, elegância e humanização dos tratamentos.
+                {about?.vision || "Ser reconhecida nacionalmente como a principal marca boutique de estética premium."}
               </p>
             </motion.div>
 
             {/* Values */}
             <motion.div
               variants={itemVariants}
-              className="bg-white dark:bg-stone-900 p-8 rounded-2xl border border-stone-200/40 dark:border-stone-800/40 shadow-xl shadow-stone-500/5 flex flex-col items-start"
+              className={`${cardStyleClass} p-8 rounded-2xl flex flex-col items-start`}
             >
               <div className="w-10 h-10 rounded-lg bg-gold-100/50 dark:bg-gold-950/20 flex items-center justify-center text-gold-550 mb-5">
                 <Shield size={20} />
@@ -144,7 +152,7 @@ export default function Sobre() {
                 Nossos Valores
               </h3>
               <p className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed font-light">
-                Ética médica inflexível, naturalidade nos resultados, exclusividade no relacionamento concierge, inovação científica e compromisso com a biossegurança.
+                {about?.values || "Ética médica inflexível, naturalidade nos resultados, exclusividade no relacionamento concierge."}
               </p>
             </motion.div>
           </motion.div>
@@ -171,25 +179,23 @@ export default function Sobre() {
           {/* Espaço Text */}
           <div className="lg:col-span-6 text-left">
             <span className="text-[9px] uppercase tracking-[0.25em] font-semibold text-gold-550 block mb-2">
-              Infraestrutura de Alto Padrão
+              {about?.infraTag || "Espaço Conforto"}
             </span>
             <h2 className="font-serif text-2xl sm:text-3xl tracking-tight text-stone-800 dark:text-stone-150 mb-6 font-medium">
-              Um ambiente projetado para aguçar seus sentidos
+              {about?.infraTitle || "Um ambiente projetado para aguçar seus sentidos"}
             </h2>
             <div className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 space-y-4 font-light leading-relaxed">
-              <p>
-                Cada detalhe da Luxe Estética foi planejado para oferecer uma experiência acolhedora. Da escolha das cores neutras e nudes ao aroma suave de baunilha e orquídea que permeia o ambiente, sua visita torna-se um ritual de autocuidado e desconexão.
-              </p>
-              <p>
-                Contamos com consultórios médicos equipados com macas elétricas aquecidas com controle ergonômico, sistemas de climatização por sala com filtragem de ar avançada e lavatórios privativos integrados.
-              </p>
-              <p>
-                Dispomos também de um espaço de relaxamento pós-procedimento onde servimos um menu cortesia de infusões orgânicas, cafés especiais e espumante brut, permitindo que você se recupere com toda a privacidade antes de retomar suas atividades diárias.
-              </p>
-            </div>
+              {about?.infraParagraphs ? (
+                about.infraParagraphs.map((para, i) => (
+                  <p key={i}>{para}</p>
+                ))
+              ) : (
+                <p>Carregando informações da estrutura...</p>
+              )}
           </div>
         </div>
-      </section>
-    </div>
-  );
+      </div>
+    </section>
+  </div>
+);
 }

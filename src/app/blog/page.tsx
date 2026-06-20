@@ -6,7 +6,7 @@ import { Calendar, Clock, User, X, BookOpen, ChevronRight } from "lucide-react";
 import { useDatabase } from "@/context/DatabaseContext";
 
 export default function Blog() {
-  const { blogPosts } = useDatabase();
+  const { blogPosts, clinicConfig } = useDatabase();
   const [activeSlug, setActiveSlug] = useState<string | null>(null);
 
   const activePost = blogPosts.find((post) => post.slug === activeSlug);
@@ -20,7 +20,7 @@ export default function Blog() {
             Ciência, Beleza & Tendências
           </span>
           <h1 className="font-serif text-4xl sm:text-5xl tracking-tight text-stone-850 dark:text-stone-100 mt-3 mb-6">
-            Blog da Luxe
+            Blog - {clinicConfig.logoText || "Clínica"}
           </h1>
           <p className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 max-w-lg mx-auto font-light leading-relaxed">
             Acompanhe artigos exclusivos escritos por nosso corpo médico com dicas de cuidados diários e o que há de mais inovador na estética mundial.
@@ -113,7 +113,7 @@ export default function Blog() {
               {/* Close Bar */}
               <div className="sticky top-0 bg-white/90 dark:bg-stone-900/90 backdrop-blur-md px-6 py-4 flex items-center justify-between border-b border-stone-100 dark:border-stone-850 z-20">
                 <span className="font-serif text-xs uppercase tracking-widest text-gold-500 font-semibold flex items-center gap-2">
-                  <BookOpen size={14} /> Leitura Luxe
+                  <BookOpen size={14} /> Artigo - {clinicConfig.logoText || "Clínica"}
                 </span>
                 <button
                   onClick={() => setActiveSlug(null)}

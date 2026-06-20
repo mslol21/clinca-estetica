@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Phone, Mail, MapPin, Clock, Send, MessageSquare } from "lucide-react";
 import { useDatabase } from "@/context/DatabaseContext";
 import { useToast } from "@/components/ui/Toast";
+import { themeConfig } from "@/config/theme-config";
 
 export default function Contato() {
   const { clinicConfig } = useDatabase();
@@ -13,6 +14,22 @@ export default function Contato() {
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
   const [sending, setSending] = useState(false);
+
+  // Dynamic border radius for buttons
+  const btnRadius =
+    themeConfig.styles.button === "pill"
+      ? "rounded-full"
+      : themeConfig.styles.button === "rounded"
+      ? "rounded-xl"
+      : "rounded-none";
+
+  // Dynamic style for cards
+  const cardStyleClass =
+    themeConfig.styles.card === "glass"
+      ? "glass-card"
+      : themeConfig.styles.card === "bordered"
+      ? "bg-white dark:bg-stone-900 border border-stone-200/60 dark:border-stone-800/40"
+      : "bg-white dark:bg-stone-900 shadow-xl shadow-stone-500/5 dark:shadow-none border border-transparent";
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -132,8 +149,8 @@ export default function Contato() {
           </div>
 
           {/* Form Column */}
-          <div className="lg:col-span-7 p-6 md:p-10 bg-stone-50 dark:bg-stone-900 rounded-3xl border border-stone-150 dark:border-stone-800/30 shadow-xl shadow-stone-500/5">
-            <h3 className="font-serif text-xl text-stone-850 dark:text-stone-150 mb-6 font-medium">
+          <div className={`lg:col-span-7 p-6 md:p-10 ${cardStyleClass} rounded-3xl`}>
+            <h3 className="font-serif text-xl text-stone-850 dark:text-stone-155 mb-6 font-medium">
               Envie uma Mensagem
             </h3>
             
@@ -207,7 +224,7 @@ export default function Contato() {
               <button
                 type="submit"
                 disabled={sending}
-                className="mt-2 py-3.5 bg-gradient-to-r from-gold-500 to-gold-400 hover:from-gold-600 hover:to-gold-500 text-white rounded-xl font-semibold uppercase tracking-widest text-center shadow-lg transition-colors cursor-pointer flex items-center justify-center gap-2"
+                className={`mt-2 py-3.5 bg-gradient-to-r from-gold-500 to-gold-400 hover:from-gold-600 hover:to-gold-500 text-white ${btnRadius} font-semibold uppercase tracking-widest text-center shadow-lg transition-colors cursor-pointer flex items-center justify-center gap-2`}
               >
                 {sending ? (
                   "Enviando..."
@@ -231,7 +248,7 @@ export default function Contato() {
             allowFullScreen={false}
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
-            title="Localização Luxe Estética no Google Maps"
+            title={`Localização ${clinicConfig.name} no Google Maps`}
           />
         </section>
       )}

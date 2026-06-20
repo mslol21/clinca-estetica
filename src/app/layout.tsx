@@ -5,6 +5,8 @@ import { AuthProvider } from "@/context/AuthContext";
 import { DatabaseProvider } from "@/context/DatabaseContext";
 import { ToastProvider } from "@/components/ui/Toast";
 import { SiteLayoutWrapper } from "@/components/site/SiteLayoutWrapper";
+import { clinicConfig } from "@/config/clinic-config";
+import { themeConfig } from "@/config/theme-config";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-serif",
@@ -20,24 +22,16 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "Luxe Estética Premium | Harmonização, Botox e Alta Tecnologia",
-  description:
-    "Clínica de estética de luxo em São Paulo. Especialista em Harmonização Facial, Botox, Laser Lavieen e rejuvenescimento corporal de alto padrão.",
-  keywords: [
-    "clinica de estetica de luxo",
-    "estetica premium",
-    "harmonizacao facial faria lima",
-    "botox sao paulo",
-    "laser lavieen",
-    "clinica de estetica itaim bibi",
-  ],
-  authors: [{ name: "Luxe Estética" }],
+  title: clinicConfig.seo.title,
+  description: clinicConfig.seo.description,
+  keywords: clinicConfig.seo.keywords,
+  authors: [{ name: clinicConfig.name }],
   openGraph: {
-    title: "Luxe Estética Premium | Clínica de Estética de Luxo",
-    description:
-      "A arte de realçar sua beleza natural com exclusividade, ética e alta tecnologia.",
-    url: "https://luxeestetica.com.br",
-    siteName: "Luxe Estética",
+    title: clinicConfig.seo.title,
+    description: clinicConfig.seo.description,
+    url: "https://localhost:3000",
+    siteName: clinicConfig.name,
+    images: [{ url: clinicConfig.seo.ogImage }],
     locale: "pt_BR",
     type: "website",
   },
@@ -55,6 +49,20 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        {/* Dynamic theme injections */}
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+              :root {
+                --luxe-primary: ${themeConfig.colors.primary};
+                --luxe-secondary: ${themeConfig.colors.secondary};
+                --luxe-accent: ${themeConfig.colors.accent};
+                --luxe-bg-light: ${themeConfig.colors.backgroundLight};
+                --luxe-bg-dark: ${themeConfig.colors.backgroundDark};
+              }
+            `,
+          }}
+        />
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -69,7 +77,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-full flex flex-col bg-stone-50 text-stone-900 dark:bg-stone-950 dark:text-stone-100 font-sans">
+      <body className="min-h-full flex flex-col bg-stone-50 text-stone-900 dark:bg-stone-950 dark:text-stone-100 font-sans transition-colors duration-300">
         <AuthProvider>
           <DatabaseProvider>
             <ToastProvider>

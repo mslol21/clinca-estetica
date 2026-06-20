@@ -13,20 +13,34 @@ import {
   Star,
   Clock,
   ArrowRight,
-  TrendingUp,
 } from "lucide-react";
 import { useDatabase } from "@/context/DatabaseContext";
 import { BeforeAfterSlider } from "@/components/site/BeforeAfterSlider";
+import { clinicConfig } from "@/config/clinic-config";
+import { themeConfig } from "@/config/theme-config";
 
 export default function Home() {
-  const { procedures, professionals, testimonials, beforeAfter, clinicConfig } = useDatabase();
+  const { procedures, testimonials, beforeAfter } = useDatabase();
   const [activeTab, setActiveTab] = useState<"facial" | "corporal" | "laser" | "avancada">("facial");
 
-  // Get highlighted procedures (first 3)
-  const highlightedProcedures = procedures.slice(0, 3);
-  
   // Filter procedures by tab
   const tabProcedures = procedures.filter((p) => p.category === activeTab);
+
+  // Dynamic border radius for buttons
+  const btnRadius =
+    themeConfig.styles.button === "pill"
+      ? "rounded-full"
+      : themeConfig.styles.button === "rounded"
+      ? "rounded-xl"
+      : "rounded-none";
+
+  // Dynamic style for cards
+  const cardStyleClass =
+    themeConfig.styles.card === "glass"
+      ? "glass-card"
+      : themeConfig.styles.card === "bordered"
+      ? "bg-white dark:bg-stone-900 border border-stone-200/60 dark:border-stone-800/40"
+      : "bg-white dark:bg-stone-900 shadow-xl shadow-stone-500/5 dark:shadow-none border border-transparent";
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -53,7 +67,7 @@ export default function Home() {
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-r from-stone-50/95 via-stone-50/80 to-transparent dark:from-stone-950/95 dark:via-stone-950/85 dark:to-transparent z-10" />
           <img
-            src="https://images.unsplash.com/photo-1519699047748-de8e457a634e?q=80&w=1600"
+            src={clinicConfig.seo.ogImage}
             alt="Recepção de luxo da clínica"
             className="w-full h-full object-cover object-center scale-105"
           />
@@ -91,7 +105,7 @@ export default function Home() {
               transition={{ delay: 0.3, duration: 0.8 }}
               className="text-sm sm:text-base text-stone-600 dark:text-stone-300 max-w-lg leading-relaxed mb-8 font-light"
             >
-              Protocolos personalizados de harmonização facial, rejuvenescimento e contorno corporal desenvolvidos por especialistas referências no mercado.
+              {clinicConfig.slogan}
             </motion.p>
 
             <motion.div
@@ -102,7 +116,7 @@ export default function Home() {
             >
               <Link
                 href="/agendamento"
-                className="w-full sm:w-auto flex items-center justify-center gap-2 text-xs uppercase tracking-widest font-semibold px-8 py-4 bg-gradient-to-r from-gold-500 to-gold-400 hover:from-gold-600 hover:to-gold-500 text-white rounded-full shadow-xl shadow-gold-500/10 hover:shadow-gold-500/25 transform hover:-translate-y-0.5 transition-all duration-200"
+                className={`w-full sm:w-auto flex items-center justify-center gap-2 text-xs uppercase tracking-widest font-semibold px-8 py-4 bg-gradient-to-r from-gold-500 to-gold-400 hover:from-gold-600 hover:to-gold-500 text-white shadow-xl shadow-gold-500/10 hover:shadow-gold-500/25 transform hover:-translate-y-0.5 transition-all duration-200 ${btnRadius}`}
               >
                 <Calendar size={14} />
                 Agendar Avaliação
@@ -112,7 +126,7 @@ export default function Home() {
                 href={`https://wa.me/55${clinicConfig.whatsapp?.replace(/\D/g, "")}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto flex items-center justify-center gap-2 text-xs uppercase tracking-widest font-semibold px-8 py-4 bg-white/80 dark:bg-stone-900/80 backdrop-blur-sm border border-stone-200 dark:border-stone-800 hover:border-gold-300 dark:hover:border-gold-700 dark:text-stone-200 text-stone-700 rounded-full transition-all duration-200 shadow-md hover:shadow-lg"
+                className={`w-full sm:w-auto flex items-center justify-center gap-2 text-xs uppercase tracking-widest font-semibold px-8 py-4 bg-white/80 dark:bg-stone-900/80 backdrop-blur-sm border border-stone-200 dark:border-stone-800 hover:border-gold-300 dark:hover:border-gold-700 dark:text-stone-200 text-stone-700 transition-all duration-200 shadow-md hover:shadow-lg ${btnRadius}`}
               >
                 <MessageSquare size={14} className="text-green-500" />
                 Falar no WhatsApp
@@ -136,7 +150,7 @@ export default function Home() {
               <div className="absolute inset-0 bg-gradient-to-t from-stone-900/60 via-transparent to-transparent" />
               
               {/* Floating review card */}
-              <div className="absolute bottom-6 left-6 right-6 glass-card p-4 rounded-xl shadow-xl flex items-center gap-3">
+              <div className={`absolute bottom-6 left-6 right-6 p-4 rounded-xl shadow-xl flex items-center gap-3 ${cardStyleClass}`}>
                 <div className="w-10 h-10 rounded-full bg-gold-400/20 flex items-center justify-center border border-gold-300">
                   <Star className="text-gold-500 fill-gold-500 h-5 w-5" />
                 </div>
@@ -145,7 +159,7 @@ export default function Home() {
                     Atendimento Concierge
                   </h4>
                   <p className="text-[10px] text-stone-500 dark:text-stone-400 font-light mt-0.5">
-                    Nota 4.9 estrelas no Google My Business
+                    Foco na satisfação e naturalidade do resultado
                   </p>
                 </div>
               </div>
@@ -162,7 +176,7 @@ export default function Home() {
               Exclusividade & Cuidado
             </span>
             <h2 className="font-serif text-3xl sm:text-4xl tracking-tight text-stone-850 dark:text-stone-100 mt-2 font-medium">
-              Por que escolher a Luxe Estética?
+              Diferenciais da {clinicConfig.name}
             </h2>
             <div className="w-12 h-[1px] bg-gold-400 mx-auto mt-4" />
           </div>
@@ -177,7 +191,7 @@ export default function Home() {
             {/* Card 1 */}
             <motion.div
               variants={itemVariants}
-              className="bg-white dark:bg-stone-900 p-8 rounded-2xl shadow-xl shadow-stone-500/5 dark:shadow-none border border-stone-200/50 dark:border-stone-800/40 hover:-translate-y-1 transition-all duration-300"
+              className={`p-8 rounded-2xl ${cardStyleClass}`}
             >
               <div className="w-12 h-12 rounded-xl bg-gold-100/50 dark:bg-gold-950/20 flex items-center justify-center text-gold-500 mb-6 border border-gold-300/20">
                 <Award size={22} />
@@ -193,7 +207,7 @@ export default function Home() {
             {/* Card 2 */}
             <motion.div
               variants={itemVariants}
-              className="bg-white dark:bg-stone-900 p-8 rounded-2xl shadow-xl shadow-stone-500/5 dark:shadow-none border border-stone-200/50 dark:border-stone-800/40 hover:-translate-y-1 transition-all duration-300"
+              className={`p-8 rounded-2xl ${cardStyleClass}`}
             >
               <div className="w-12 h-12 rounded-xl bg-gold-100/50 dark:bg-gold-950/20 flex items-center justify-center text-gold-500 mb-6 border border-gold-300/20">
                 <Sparkles size={22} />
@@ -202,14 +216,14 @@ export default function Home() {
                 Tecnologia de Ponta
               </h3>
               <p className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed font-light">
-                Utilizamos os aparelhos mais consagrados da estética mundial, como Ultraformer III e Laser Lavieen, aprovados pela ANVISA e FDA.
+                Utilizamos os aparelhos mais consagrados da estética mundial, como Ultraformer III e Laser Lavieen, aprovados pelos órgãos de saúde.
               </p>
             </motion.div>
 
             {/* Card 3 */}
             <motion.div
               variants={itemVariants}
-              className="bg-white dark:bg-stone-900 p-8 rounded-2xl shadow-xl shadow-stone-500/5 dark:shadow-none border border-stone-200/50 dark:border-stone-800/40 hover:-translate-y-1 transition-all duration-300"
+              className={`p-8 rounded-2xl ${cardStyleClass}`}
             >
               <div className="w-12 h-12 rounded-xl bg-gold-100/50 dark:bg-gold-950/20 flex items-center justify-center text-gold-500 mb-6 border border-gold-300/20">
                 <ShieldCheck size={22} />
@@ -274,7 +288,7 @@ export default function Home() {
               tabProcedures.map((proc) => (
                 <div
                   key={proc.id}
-                  className="bg-white dark:bg-stone-900 rounded-2xl overflow-hidden shadow-xl border border-stone-200/50 dark:border-stone-800/30 flex flex-col group hover:-translate-y-1 transition-all duration-300"
+                  className={`rounded-2xl overflow-hidden flex flex-col group hover:-translate-y-1 transition-all duration-300 ${cardStyleClass}`}
                 >
                   <div className="relative aspect-[4/3] w-full overflow-hidden">
                     <img
@@ -318,7 +332,7 @@ export default function Home() {
                 </div>
               ))
             ) : (
-              <div className="col-span-full py-12 text-center text-stone-455">
+              <div className="col-span-full py-12 text-center text-stone-450">
                 Nenhum procedimento cadastrado nesta categoria.
               </div>
             )}
@@ -366,7 +380,7 @@ export default function Home() {
               </h3>
               <p className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 leading-relaxed font-light mb-6">
                 {beforeAfter[0]?.description ||
-                  "Combinação de laser de túlio Lavieen para clareamento de pele e suavização de sulcos, devolvendo o contorno da mandíbula de forma natural e sem alterar a essência da paciente."}
+                  "Combinação de tratamentos clínicos focados em restauração cutânea, devolvendo a simetria natural de forma equilibrada e sem alterar a essência."}
               </p>
 
               <div className="flex items-center gap-6 mb-8">
@@ -383,7 +397,7 @@ export default function Home() {
 
               <Link
                 href="/antes-e-depois"
-                className="flex items-center gap-2 text-xs uppercase tracking-widest font-semibold px-6 py-3 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 text-stone-750 dark:text-stone-300 hover:text-gold-500 dark:hover:text-gold-400 rounded-full transition-all"
+                className={`flex items-center gap-2 text-xs uppercase tracking-widest font-semibold px-6 py-3 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 text-stone-750 dark:text-stone-300 hover:text-gold-500 dark:hover:text-gold-400 transition-all ${btnRadius}`}
               >
                 Ver Galeria Antes e Depois
                 <ChevronRight size={14} />
@@ -410,7 +424,7 @@ export default function Home() {
             {testimonials.slice(0, 3).map((item) => (
               <div
                 key={item.id}
-                className="bg-white dark:bg-stone-900 p-8 rounded-2xl shadow-xl shadow-stone-500/5 border border-stone-200/50 dark:border-stone-800/30 flex flex-col justify-between"
+                className={`p-8 rounded-2xl flex flex-col justify-between ${cardStyleClass}`}
               >
                 <div>
                   <div className="flex items-center gap-0.5 text-gold-400 mb-5">
@@ -444,58 +458,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 6. EQUIPE MEDICA */}
-      <section className="py-20 bg-stone-100 dark:bg-stone-900/40 relative z-10 transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-xl mx-auto mb-16">
-            <span className="text-[10px] uppercase tracking-[0.3em] font-semibold text-gold-500 dark:text-gold-400">
-              Especialistas ao seu lado
-            </span>
-            <h2 className="font-serif text-3xl sm:text-4xl tracking-tight text-stone-850 dark:text-stone-100 mt-2 font-medium">
-              Nosso Corpo Clínico
-            </h2>
-            <div className="w-12 h-[1px] bg-gold-400 mx-auto mt-4" />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {professionals.map((prof) => (
-              <div
-                key={prof.id}
-                className="bg-white dark:bg-stone-900 rounded-2xl overflow-hidden shadow-xl border border-stone-200/50 dark:border-stone-800/30 group"
-              >
-                <div className="relative aspect-[3/4] overflow-hidden">
-                  <img
-                    src={prof.image}
-                    alt={prof.name}
-                    className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-stone-950/70 via-stone-900/10 to-transparent" />
-                  
-                  <div className="absolute bottom-6 left-6 right-6 text-white">
-                    <h3 className="font-serif text-lg font-semibold tracking-wide text-stone-100">
-                      {prof.name}
-                    </h3>
-                    <p className="text-[10px] text-gold-300 uppercase tracking-widest font-light mt-0.5">
-                      {prof.role}
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="p-6">
-                  <span className="text-[9px] uppercase tracking-widest font-semibold text-gold-500 block mb-2">
-                    Especialidade: {prof.specialty}
-                  </span>
-                  <p className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed font-light">
-                    {prof.bio}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 7. CONVENIO & PAGAMENTO */}
+      {/* 6. CONVENIO & PAGAMENTO */}
       <section className="py-16 bg-white dark:bg-stone-950 relative z-10 transition-colors border-t border-b border-stone-100 dark:border-stone-900/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -521,7 +484,7 @@ export default function Home() {
             </div>
 
             {/* Right Column: Payments */}
-            <div className="p-8 rounded-2xl bg-stone-100/50 dark:bg-stone-900/20 border border-stone-200/50 dark:border-stone-800/40">
+            <div className={`p-8 rounded-2xl ${cardStyleClass}`}>
               <h4 className="font-serif text-lg text-stone-850 dark:text-stone-100 mb-4 font-medium">
                 Condições de Pagamento
               </h4>
@@ -544,7 +507,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 8. CTA FINAL */}
+      {/* 7. CTA FINAL */}
       <section className="py-24 bg-stone-100 dark:bg-stone-900/35 relative z-10 transition-colors text-center overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gold-400/5 rounded-full blur-[100px] pointer-events-none" />
         
@@ -564,7 +527,7 @@ export default function Home() {
           
           <Link
             href="/agendamento"
-            className="inline-flex items-center gap-2 text-xs uppercase tracking-widest font-semibold px-8 py-4 bg-gradient-to-r from-gold-500 to-gold-400 hover:from-gold-600 hover:to-gold-500 text-white rounded-full shadow-xl shadow-gold-500/10 hover:shadow-gold-500/25 transition-all duration-200 transform hover:-translate-y-0.5"
+            className={`inline-flex items-center gap-2 text-xs uppercase tracking-widest font-semibold px-8 py-4 bg-gradient-to-r from-gold-500 to-gold-400 hover:from-gold-600 hover:to-gold-500 text-white shadow-xl shadow-gold-500/10 hover:shadow-gold-500/25 transition-all duration-200 transform hover:-translate-y-0.5 ${btnRadius}`}
           >
             <Calendar size={14} />
             Agendar Consulta

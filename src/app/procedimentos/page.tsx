@@ -6,6 +6,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Clock, Info, Check, HelpCircle, Calendar, Plus, Minus } from "lucide-react";
 import { useDatabase } from "@/context/DatabaseContext";
+import { themeConfig } from "@/config/theme-config";
 
 function ProcedimentosContent() {
   const { procedures } = useDatabase();
@@ -40,6 +41,22 @@ function ProcedimentosContent() {
       ? procedures
       : procedures.filter((p) => p.category === selectedCategory);
 
+  // Dynamic border radius for buttons
+  const btnRadius =
+    themeConfig.styles.button === "pill"
+      ? "rounded-full"
+      : themeConfig.styles.button === "rounded"
+      ? "rounded-xl"
+      : "rounded-none";
+
+  // Dynamic style for cards
+  const cardStyleClass =
+    themeConfig.styles.card === "glass"
+      ? "glass-card"
+      : themeConfig.styles.card === "bordered"
+      ? "bg-white dark:bg-stone-900 border border-stone-200/60 dark:border-stone-800/40"
+      : "bg-white dark:bg-stone-900 shadow-xl shadow-stone-500/5 dark:shadow-none border border-transparent";
+
   return (
     <div className="relative pt-12 pb-20 overflow-hidden">
       {/* Header */}
@@ -65,7 +82,7 @@ function ProcedimentosContent() {
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id as any)}
-                className={`px-4 md:px-6 py-2.5 rounded-full text-xs uppercase tracking-widest font-semibold transition-all ${
+                className={`px-4 md:px-6 py-2.5 ${btnRadius} text-xs uppercase tracking-widest font-semibold transition-all ${
                   selectedCategory === cat.id
                     ? "bg-gradient-to-r from-gold-500 to-gold-400 text-white shadow-lg shadow-gold-500/10"
                     : "text-stone-500 hover:text-stone-850 dark:text-stone-400 dark:hover:text-stone-200 bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800"
@@ -93,7 +110,7 @@ function ProcedimentosContent() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ duration: 0.5 }}
-                    className={`grid grid-cols-1 lg:grid-cols-12 gap-12 items-start scroll-mt-36 p-6 md:p-10 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200/50 dark:border-stone-800/40 shadow-xl shadow-stone-500/5`}
+                    className={`grid grid-cols-1 lg:grid-cols-12 gap-12 items-start scroll-mt-36 p-6 md:p-10 ${cardStyleClass} rounded-3xl`}
                   >
                     {/* Image Column */}
                     <div className={`lg:col-span-5 ${!isEven ? "lg:order-2" : ""}`}>
@@ -126,7 +143,7 @@ function ProcedimentosContent() {
                       {/* CTA button */}
                       <Link
                         href={`/agendamento?procedureId=${proc.id}`}
-                        className="mt-4 w-full flex items-center justify-center gap-2 text-xs uppercase tracking-widest font-semibold py-3.5 bg-gradient-to-r from-gold-500 to-gold-400 hover:from-gold-600 hover:to-gold-500 text-white rounded-xl shadow-lg transition-all"
+                        className={`mt-4 w-full flex items-center justify-center gap-2 text-xs uppercase tracking-widest font-semibold py-3.5 bg-gradient-to-r from-gold-500 to-gold-400 hover:from-gold-600 hover:to-gold-500 text-white ${btnRadius} shadow-lg transition-all`}
                       >
                         <Calendar size={14} />
                         Agendar este procedimento

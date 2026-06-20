@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -11,9 +11,6 @@ import {
   Image as ImageIcon,
   Columns,
   MessageSquare,
-  UserCheck,
-  DollarSign,
-  FileText,
   Settings,
   LogOut,
   Plus,
@@ -22,53 +19,42 @@ import {
   Search,
   CheckCircle,
   XCircle,
-  FileDown,
-  TrendingUp,
-  Sliders,
   Menu,
   Star,
+  Clock,
+  Save,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useDatabase } from "@/context/DatabaseContext";
 import { useToast } from "@/components/ui/Toast";
+import { themeConfig } from "@/config/theme-config";
 import {
-  AreaChart,
-  Area,
   BarChart,
   Bar,
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   Tooltip,
   ResponsiveContainer,
-  CartesianGrid,
 } from "recharts";
 
 type AdminTab =
   | "dashboard"
   | "agenda"
   | "clientes"
-  | "procedimentos"
   | "galeria"
-  | "antes-e-depois"
+  | "procedimentos"
   | "depoimentos"
-  | "equipe"
-  | "financeiro"
-  | "relatorios"
   | "configuracoes";
 
 export default function AdminPanel() {
   const { user, loading: authLoading, logout } = useAuth();
   const {
     procedures,
-    professionals,
     clients,
     appointments,
     gallery,
     beforeAfter,
     testimonials,
-    financialRecords,
     clinicConfig,
     saveProcedure,
     deleteProcedure,
@@ -76,16 +62,12 @@ export default function AdminPanel() {
     deleteClient,
     saveAppointment,
     deleteAppointment,
-    saveProfessional,
-    deleteProfessional,
     saveGalleryItem,
     deleteGalleryItem,
     saveBeforeAfterItem,
     deleteBeforeAfterItem,
     saveTestimonial,
     deleteTestimonial,
-    saveFinancialRecord,
-    deleteFinancialRecord,
     saveClinicConfig,
   } = useDatabase();
   
@@ -94,40 +76,77 @@ export default function AdminPanel() {
 
   // Tab State
   const [activeTab, setActiveTab] = useState<AdminTab>("dashboard");
-  const [mounted, setMounted] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-
-  // Global Search State
   const [globalSearch, setGlobalSearch] = useState("");
 
-  // Overlays / Modal states
+  // Sub-tab inside Galeria ("photos" or "before-after")
+  const [gallerySubTab, setGallerySubTab] = useState<"photos" | "before-after">("photos");
+
+  // Modal States
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalType, setModalType] = useState<"client" | "procedure" | "appointment" | "professional" | "gallery" | "beforeAfter" | "testimonial" | "financial" | null>(null);
+  const [modalType, setModalType] = useState<"client" | "procedure" | "appointment" | "gallery" | "beforeAfter" | "testimonial" | null>(null);
   const [editId, setEditId] = useState<string | null>(null);
 
   // Form Fields States
   const [clientForm, setClientForm] = useState({ name: "", phone: "", whatsapp: "", email: "", birthDate: "", observations: "" });
-  const [procForm, setProcForm] = useState({ name: "", category: "facial" as any, description: "", duration: 45, price: 0, benefits: "", contraindications: "", faqQ: "", faqA: "" });
-  const [apptForm, setApptForm] = useState({ clientId: "", procedureId: "", professionalId: "", date: "", time: "", notes: "" });
-  const [profForm, setProfForm] = useState({ name: "", role: "", specialty: "", bio: "", image: "", hours: "09:00,10:00,11:00,14:00,15:00,16:00,17:00" });
-  const [galForm, setGalForm] = useState({ title: "", category: "facial" as any, image: "" });
-  const [baForm, setBaForm] = useState({ title: "", category: "facial" as any, description: "", beforeImage: "", afterImage: "" });
+  const [procForm, setProcForm] = useState({ name: "", category: "facial", description: "", duration: 45, price: 0, benefits: "", contraindications: "" });
+  const [apptForm, setApptForm] = useState({ clientId: "", clientName: "", clientPhone: "", procedureId: "", date: "", time: "", notes: "", price: 0, status: "confirmado" as "confirmado" | "cancelado" | "pendente" });
+  const [galForm, setGalForm] = useState({ title: "", category: "facial", image: "" });
+  const [baForm, setBaForm] = useState({ title: "", category: "facial", description: "", beforeImage: "", afterImage: "" });
   const [testForm, setTestForm] = useState({ name: "", role: "", comment: "", rating: 5, photo: "" });
-  const [finForm, setFinForm] = useState({ type: "entrada" as "entrada" | "saida", description: "", value: 0, date: "", category: "Procedimentos" });
 
-  // Clinic config form
-  const [configForm, setConfigForm] = useState({ ...clinicConfig });
+  // Clinic config form state
+  const [configForm, setConfigForm] = useState({
+    name: "",
+    slogan: "",
+    logoText: "",
+    phone: "",
+    whatsapp: "",
+    email: "",
+    address: "",
+    workingHours: { weekdays: "", saturday: "", sunday: "" },
+    googleMapsUrl: "",
+    social: { instagram: "", facebook: "", youtube: "" },
+    seo: { title: "", description: "", keywords: [] as string[], ogImage: "" },
+  });
 
-  // Direct auth protection check
+  // Protect Admin route
   useEffect(() => {
     if (!authLoading && !user) {
       router.push("/admin/login");
     }
   }, [user, authLoading, router]);
 
+  // Sync config form
   useEffect(() => {
-    setMounted(true);
-    setConfigForm({ ...clinicConfig });
+    if (clinicConfig) {
+      setConfigForm({
+        name: clinicConfig.name || "",
+        slogan: clinicConfig.slogan || "",
+        logoText: clinicConfig.logoText || "",
+        phone: clinicConfig.phone || "",
+        whatsapp: clinicConfig.whatsapp || "",
+        email: clinicConfig.email || "",
+        address: clinicConfig.address || "",
+        workingHours: {
+          weekdays: clinicConfig.workingHours?.weekdays || "",
+          saturday: clinicConfig.workingHours?.saturday || "",
+          sunday: clinicConfig.workingHours?.sunday || "",
+        },
+        googleMapsUrl: clinicConfig.googleMapsUrl || "",
+        social: {
+          instagram: clinicConfig.social?.instagram || "",
+          facebook: clinicConfig.social?.facebook || "",
+          youtube: clinicConfig.social?.youtube || "",
+        },
+        seo: {
+          title: clinicConfig.seo?.title || "",
+          description: clinicConfig.seo?.description || "",
+          keywords: clinicConfig.seo?.keywords || [],
+          ogImage: clinicConfig.seo?.ogImage || "",
+        },
+      });
+    }
   }, [clinicConfig]);
 
   if (authLoading || !user) {
@@ -147,198 +166,172 @@ export default function AdminPanel() {
     router.push("/admin/login");
   };
 
+  const handleSaveConfig = (e: React.FormEvent) => {
+    e.preventDefault();
+    saveClinicConfig({
+      ...clinicConfig,
+      ...configForm,
+    });
+    success("Configurações salvas!", "Os dados da clínica foram atualizados globalmente.");
+  };
+
+  // Modal Open Actions
   const handleOpenAddModal = (type: typeof modalType) => {
-    setModalType(type);
     setEditId(null);
-    setIsModalOpen(true);
-    // Reset forms
-    if (type === "client") setClientForm({ name: "", phone: "", whatsapp: "", email: "", birthDate: "", observations: "" });
-    if (type === "procedure") setProcForm({ name: "", category: "facial", description: "", duration: 45, price: 0, benefits: "", contraindications: "", faqQ: "", faqA: "" });
-    if (type === "appointment") setApptForm({ clientId: "", procedureId: "", professionalId: "", date: "", time: "", notes: "" });
-    if (type === "professional") setProfForm({ name: "", role: "", specialty: "", bio: "", image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=300", hours: "09:00,10:00,11:00,14:00,15:00,16:00,17:00" });
-    if (type === "gallery") setGalForm({ title: "", category: "facial", image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=400" });
-    if (type === "beforeAfter") setBaForm({ title: "", category: "facial", description: "", beforeImage: "https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?q=80&w=400", afterImage: "https://images.unsplash.com/photo-1616683693504-3ea7e9ad6fec?q=80&w=400" });
-    if (type === "testimonial") setTestForm({ name: "", role: "Cliente", comment: "", rating: 5, photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=150" });
-    if (type === "financial") setFinForm({ type: "entrada", description: "", value: 0, date: new Date().toISOString().split("T")[0], category: "Procedimentos" });
-  };
-
-  const handleEditModal = (type: typeof modalType, item: any) => {
     setModalType(type);
-    setEditId(item.id);
-    setIsModalOpen(true);
     
-    if (type === "client") setClientForm({ name: item.name, phone: item.phone, whatsapp: item.whatsapp, email: item.email, birthDate: item.birthDate, observations: item.observations });
-    if (type === "procedure") setProcForm({ name: item.name, category: item.category, description: item.description, duration: item.duration, price: item.price || 0, benefits: item.benefits.join(", "), contraindications: item.contraindications.join(", "), faqQ: item.faq?.[0]?.question || "", faqA: item.faq?.[0]?.answer || "" });
-    if (type === "appointment") setApptForm({ clientId: item.clientId, procedureId: item.procedureId, professionalId: item.professionalId, date: item.date, time: item.time, notes: item.notes || "" });
-    if (type === "professional") setProfForm({ name: item.name, role: item.role, specialty: item.specialty, bio: item.bio, image: item.image, hours: item.availableHours.join(",") });
-    if (type === "gallery") setGalForm({ title: item.title, category: item.category, image: item.image });
-    if (type === "beforeAfter") setBaForm({ title: item.title, category: item.category, description: item.description, beforeImage: item.beforeImage, afterImage: item.afterImage });
-    if (type === "testimonial") setTestForm({ name: item.name, role: item.role, comment: item.comment, rating: item.rating, photo: item.photo });
-    if (type === "financial") setFinForm({ type: item.type, description: item.description, value: item.value, date: item.date, category: item.category });
+    if (type === "client") setClientForm({ name: "", phone: "", whatsapp: "", email: "", birthDate: "", observations: "" });
+    if (type === "procedure") setProcForm({ name: "", category: "facial", description: "", duration: 45, price: 0, benefits: "", contraindications: "" });
+    if (type === "appointment") setApptForm({ clientId: "", clientName: "", clientPhone: "", procedureId: "", date: "", time: "", notes: "", price: 0, status: "confirmado" });
+    if (type === "gallery") setGalForm({ title: "", category: "facial", image: "" });
+    if (type === "beforeAfter") setBaForm({ title: "", category: "facial", description: "", beforeImage: "", afterImage: "" });
+    if (type === "testimonial") setTestForm({ name: "", role: "", comment: "", rating: 5, photo: "" });
+
+    setIsModalOpen(true);
   };
 
-  const handleDeleteItem = (type: typeof modalType, id: string) => {
-    if (!confirm("Tem certeza que deseja excluir este item? Esta ação não pode ser desfeita.")) return;
-    try {
+  const handleOpenEditModal = (type: typeof modalType, id: string) => {
+    setEditId(id);
+    setModalType(type);
+
+    if (type === "client") {
+      const match = clients.find((c) => c.id === id);
+      if (match) setClientForm({ name: match.name, phone: match.phone, whatsapp: match.whatsapp, email: match.email, birthDate: match.birthDate, observations: match.observations });
+    }
+    if (type === "procedure") {
+      const match = procedures.find((p) => p.id === id);
+      if (match) setProcForm({ name: match.name, category: match.category, description: match.description, duration: match.duration, price: match.price || 0, benefits: match.benefits.join(", "), contraindications: match.contraindications.join(", ") });
+    }
+    if (type === "appointment") {
+      const match = appointments.find((a) => a.id === id);
+      if (match) setApptForm({ clientId: match.clientId, clientName: match.clientName, clientPhone: match.clientPhone, procedureId: match.procedureId, date: match.date, time: match.time, notes: match.notes || "", price: match.price, status: match.status });
+    }
+    if (type === "gallery") {
+      const match = gallery.find((g) => g.id === id);
+      if (match) setGalForm({ title: match.title, category: match.category, image: match.image });
+    }
+    if (type === "beforeAfter") {
+      const match = beforeAfter.find((b) => b.id === id);
+      if (match) setBaForm({ title: match.title, category: match.category, description: match.description, beforeImage: match.beforeImage, afterImage: match.afterImage });
+    }
+    if (type === "testimonial") {
+      const match = testimonials.find((t) => t.id === id);
+      if (match) setTestForm({ name: match.name, role: match.role, comment: match.comment, rating: match.rating, photo: match.photo });
+    }
+
+    setIsModalOpen(true);
+  };
+
+  // Submit Modal Actions
+  const handleModalSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (modalType === "client") {
+      const id = editId || `c-${Math.random().toString(36).substring(2, 9)}`;
+      saveClient({ id, ...clientForm, createdAt: new Date().toISOString() });
+      success("Cliente salvo", "O cadastro do cliente foi atualizado.");
+    }
+    if (modalType === "procedure") {
+      const id = editId || `p-${Math.random().toString(36).substring(2, 9)}`;
+      saveProcedure({
+        id,
+        name: procForm.name,
+        category: procForm.category as any,
+        description: procForm.description,
+        duration: Number(procForm.duration),
+        price: Number(procForm.price),
+        image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=600",
+        benefits: procForm.benefits.split(",").map((b) => b.trim()).filter(Boolean),
+        contraindications: procForm.contraindications.split(",").map((c) => c.trim()).filter(Boolean),
+        faq: []
+      });
+      success("Procedimento salvo", "O procedimento foi atualizado.");
+    }
+    if (modalType === "appointment") {
+      const id = editId || `a-${Math.random().toString(36).substring(2, 9)}`;
+      const proc = procedures.find((p) => p.id === apptForm.procedureId);
+      saveAppointment({
+        id,
+        clientId: apptForm.clientId || "c1",
+        clientName: apptForm.clientName || "Cliente Demo",
+        clientPhone: apptForm.clientPhone || "(11) 99999-9999",
+        procedureId: apptForm.procedureId,
+        procedureName: proc?.name || "Procedimento",
+        date: apptForm.date,
+        time: apptForm.time,
+        notes: apptForm.notes,
+        price: Number(apptForm.price || proc?.price || 0),
+        status: apptForm.status,
+      });
+      success("Agendamento salvo", "O agendamento foi atualizado.");
+    }
+    if (modalType === "gallery") {
+      const id = editId || `g-${Math.random().toString(36).substring(2, 9)}`;
+      saveGalleryItem({
+        id,
+        title: galForm.title,
+        category: galForm.category as any,
+        image: galForm.image,
+        createdAt: new Date().toISOString().split("T")[0],
+      });
+      success("Foto salva", "A foto foi adicionada à galeria.");
+    }
+    if (modalType === "beforeAfter") {
+      const id = editId || `ba-${Math.random().toString(36).substring(2, 9)}`;
+      saveBeforeAfterItem({
+        id,
+        title: baForm.title,
+        category: baForm.category as any,
+        description: baForm.description,
+        beforeImage: baForm.beforeImage,
+        afterImage: baForm.afterImage,
+        createdAt: new Date().toISOString().split("T")[0],
+      });
+      success("Caso salvo", "O caso antes e depois foi registrado.");
+    }
+    if (modalType === "testimonial") {
+      const id = editId || `t-${Math.random().toString(36).substring(2, 9)}`;
+      saveTestimonial({
+        id,
+        ...testForm,
+        photo: testForm.photo || "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=150",
+        date: new Date().toISOString().split("T")[0]
+      });
+      success("Depoimento salvo", "O depoimento foi atualizado.");
+    }
+
+    setIsModalOpen(false);
+  };
+
+  // Delete Actions
+  const handleDeleteItem = (type: "client" | "procedure" | "appointment" | "gallery" | "beforeAfter" | "testimonial", id: string) => {
+    if (window.confirm("Deseja realmente excluir este item?")) {
       if (type === "client") deleteClient(id);
       if (type === "procedure") deleteProcedure(id);
       if (type === "appointment") deleteAppointment(id);
-      if (type === "professional") deleteProfessional(id);
       if (type === "gallery") deleteGalleryItem(id);
       if (type === "beforeAfter") deleteBeforeAfterItem(id);
       if (type === "testimonial") deleteTestimonial(id);
-      if (type === "financial") deleteFinancialRecord(id);
-      success("Excluído com sucesso", "O item foi removido do banco de dados.");
-    } catch {
-      error("Erro ao excluir", "Não foi possível remover o item selecionado.");
+      success("Excluído com sucesso", "O item foi removido do sistema.");
     }
   };
 
-  const handleSaveSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const id = editId || Math.random().toString(36).substring(2, 9);
-      
-      if (modalType === "client") {
-        saveClient({ id, ...clientForm, createdAt: new Date().toISOString() });
-      }
-      else if (modalType === "procedure") {
-        saveProcedure({
-          id,
-          name: procForm.name,
-          category: procForm.category,
-          description: procForm.description,
-          duration: Number(procForm.duration),
-          price: Number(procForm.price),
-          benefits: procForm.benefits.split(",").map((s) => s.trim()).filter(Boolean),
-          contraindications: procForm.contraindications.split(",").map((s) => s.trim()).filter(Boolean),
-          faq: procForm.faqQ ? [{ question: procForm.faqQ, answer: procForm.faqA }] : [],
-          image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=400",
-        });
-      }
-      else if (modalType === "appointment") {
-        const clientObj = clients.find((c) => c.id === apptForm.clientId);
-        const procObj = procedures.find((p) => p.id === apptForm.procedureId);
-        const profObj = professionals.find((p) => p.id === apptForm.professionalId);
-        
-        saveAppointment({
-          id,
-          clientId: apptForm.clientId,
-          clientName: clientObj?.name || "Cliente Manual",
-          clientPhone: clientObj?.phone || "",
-          procedureId: apptForm.procedureId,
-          procedureName: procObj?.name || "",
-          professionalId: apptForm.professionalId,
-          professionalName: profObj?.name || "",
-          date: apptForm.date,
-          time: apptForm.time,
-          status: "confirmado",
-          price: procObj?.price || 0,
-          notes: apptForm.notes,
-        });
-      }
-      else if (modalType === "professional") {
-        saveProfessional({
-          id,
-          name: profForm.name,
-          role: profForm.role,
-          specialty: profForm.specialty,
-          bio: profForm.bio,
-          image: profForm.image,
-          rating: 4.9,
-          availableHours: profForm.hours.split(",").map((s) => s.trim()).filter(Boolean),
-        });
-      }
-      else if (modalType === "gallery") {
-        saveGalleryItem({
-          id,
-          title: galForm.title,
-          category: galForm.category,
-          image: galForm.image,
-          createdAt: new Date().toISOString().split("T")[0],
-        });
-      }
-      else if (modalType === "beforeAfter") {
-        saveBeforeAfterItem({
-          id,
-          title: baForm.title,
-          category: baForm.category,
-          description: baForm.description,
-          beforeImage: baForm.beforeImage,
-          afterImage: baForm.afterImage,
-          createdAt: new Date().toISOString().split("T")[0],
-        });
-      }
-      else if (modalType === "testimonial") {
-        saveTestimonial({
-          id,
-          name: testForm.name,
-          role: testForm.role,
-          comment: testForm.comment,
-          rating: Number(testForm.rating),
-          photo: testForm.photo,
-          date: new Date().toISOString().split("T")[0],
-        });
-      }
-      else if (modalType === "financial") {
-        saveFinancialRecord({
-          id,
-          type: finForm.type,
-          description: finForm.description,
-          value: Number(finForm.value),
-          date: finForm.date,
-          category: finForm.category,
-        });
-      }
-
-      success("Salvo com sucesso!", "Os dados foram gravados e atualizados reativamente.");
-      setIsModalOpen(false);
-    } catch {
-      error("Erro ao salvar", "Ocorreu um erro no preenchimento. Revise os campos.");
-    }
+  // Group appointments by date for the dashboard chart
+  const getChartData = () => {
+    const counts: { [key: string]: number } = {};
+    appointments.forEach((a) => {
+      counts[a.date] = (counts[a.date] || 0) + 1;
+    });
+    return Object.keys(counts)
+      .sort()
+      .slice(-7)
+      .map((date) => ({
+        date: new Date(date + "T00:00:00").toLocaleDateString("pt-BR", { day: "numeric", month: "short" }),
+        Agendamentos: counts[date],
+      }));
   };
 
-  const handleConfigSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    saveClinicConfig(configForm);
-    success("Configurações salvas!", "As informações da clínica foram gravadas.");
-  };
-
-  // Recharts Chart Mock Data Sets
-  const monthlyRevenueData = [
-    { name: "Jan", receita: 18000, despesas: 8000, lucro: 10000 },
-    { name: "Fev", receita: 22000, despesas: 9500, lucro: 12500 },
-    { name: "Mar", receita: 25000, despesas: 11000, lucro: 14000 },
-    { name: "Abr", receita: 30000, despesas: 12500, lucro: 17500 },
-    { name: "Mai", receita: 28000, despesas: 10000, lucro: 18000 },
-    { name: "Jun", receita: 35000, despesas: 13000, lucro: 22000 },
-  ];
-
-  const apptByCategoryData = [
-    { name: "Facial", agendamentos: 45 },
-    { name: "Corporal", agendamentos: 28 },
-    { name: "Laser", agendamentos: 38 },
-    { name: "Avançada", agendamentos: 19 },
-  ];
-
-  const clientGrowthData = [
-    { name: "Jan", total: 85 },
-    { name: "Fev", total: 110 },
-    { name: "Mar", total: 140 },
-    { name: "Abr", total: 185 },
-    { name: "Mai", total: 210 },
-    { name: "Jun", total: 248 },
-  ];
-
-  // Calculate quick metrics
-  const totalRevenue = financialRecords
-    .filter((f) => f.type === "entrada")
-    .reduce((acc, curr) => acc + curr.value, 0);
-  const totalExpenses = financialRecords
-    .filter((f) => f.type === "saida")
-    .reduce((acc, curr) => acc + curr.value, 0);
-  const netProfit = totalRevenue - totalExpenses;
-
+  const chartData = getChartData();
   const todayStr = new Date().toISOString().split("T")[0];
   const todayAppointments = appointments.filter((a) => a.date === todayStr);
 
@@ -346,44 +339,54 @@ export default function AdminPanel() {
     { id: "dashboard", name: "Dashboard", icon: LayoutDashboard },
     { id: "agenda", name: "Agenda", icon: CalendarIcon },
     { id: "clientes", name: "Clientes", icon: Users },
+    { id: "galeria", name: "Galeria & Casos", icon: ImageIcon },
     { id: "procedimentos", name: "Procedimentos", icon: Sparkles },
-    { id: "galeria", name: "Galeria", icon: ImageIcon },
-    { id: "antes-e-depois", name: "Antes e Depois", icon: Columns },
     { id: "depoimentos", name: "Depoimentos", icon: MessageSquare },
-    { id: "equipe", name: "Equipe", icon: UserCheck },
-    { id: "financeiro", name: "Financeiro", icon: DollarSign },
-    { id: "relatorios", name: "Relatórios", icon: FileText },
     { id: "configuracoes", name: "Configurações", icon: Settings },
   ];
+
+  // Dynamic button style from themeConfig
+  const btnRadius =
+    themeConfig.styles.button === "pill"
+      ? "rounded-full"
+      : themeConfig.styles.button === "rounded"
+      ? "rounded-xl"
+      : "rounded-none";
+
+  // Dynamic card style from themeConfig
+  const cardStyleClass =
+    themeConfig.styles.card === "glass"
+      ? "glass-card"
+      : themeConfig.styles.card === "bordered"
+      ? "bg-white dark:bg-stone-900 border border-stone-200/60 dark:border-stone-800/40"
+      : "bg-white dark:bg-stone-900 shadow-xl shadow-stone-500/5 dark:shadow-none border border-transparent";
 
   return (
     <div className="min-h-screen bg-stone-100 dark:bg-stone-950 flex flex-col lg:flex-row font-sans text-xs transition-colors">
       
-      {/* Mobile Drawer trigger */}
+      {/* Mobile Header */}
       <div className="lg:hidden bg-stone-50 dark:bg-stone-900 border-b border-stone-200 dark:border-stone-850 px-4 py-3 flex items-center justify-between z-40 shrink-0">
-        <span className="font-serif font-bold text-stone-800 dark:text-stone-100 text-sm tracking-wide">LUXE ADMIN</span>
-        <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-1 rounded border border-stone-200 dark:border-stone-800">
-          <Menu size={18} />
+        <span className="font-serif font-bold text-stone-800 dark:text-stone-100 text-sm tracking-wide">
+          {clinicConfig.logoText || "LUXE"} ADMIN
+        </span>
+        <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-1.5 rounded border border-stone-200 dark:border-stone-800 text-stone-600 dark:text-stone-300">
+          <Menu size={16} />
         </button>
       </div>
 
-      {/* SIDEBAR CONTAINER */}
-      {sidebarOpen && (
-        <aside className="w-full lg:w-64 bg-stone-900 text-stone-300 flex flex-col shrink-0 z-30">
-          {/* Sidebar Brand */}
-          <div className="px-6 py-6 border-b border-stone-800 flex flex-col select-none">
-            <span className="font-serif text-lg tracking-[0.25em] uppercase text-white font-medium">
-              Luxe Estética
+      {/* Sidebar navigation */}
+      <aside className={`w-full lg:w-64 bg-stone-50 dark:bg-stone-900 border-r border-stone-200 dark:border-stone-850 flex flex-col justify-between p-6 shrink-0 lg:block ${sidebarOpen ? "block" : "hidden"}`}>
+        <div className="flex flex-col gap-8">
+          <div className="hidden lg:flex flex-col">
+            <span className="font-serif font-bold text-base tracking-widest text-stone-850 dark:text-stone-100">
+              {clinicConfig.logoText || "LUXE"}
             </span>
-            <span className="text-[8px] tracking-[0.2em] uppercase text-gold-400 font-light mt-0.5">
-              Administração Concierge
-            </span>
+            <span className="text-[9px] uppercase tracking-[0.25em] text-gold-550 mt-1 font-semibold">Painel Administrativo</span>
           </div>
 
-          {/* Navigation Links */}
-          <nav className="flex-1 px-4 py-6 flex flex-col gap-1 overflow-y-auto">
+          <nav className="flex flex-col gap-1.5">
             {menuItems.map((item) => {
-              const IconComp = item.icon;
+              const Icon = item.icon;
               const isActive = activeTab === item.id;
               return (
                 <button
@@ -392,279 +395,239 @@ export default function AdminPanel() {
                     setActiveTab(item.id as any);
                     if (window.innerWidth < 1024) setSidebarOpen(false);
                   }}
-                  className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl font-medium tracking-wide transition-all text-left cursor-pointer ${
+                  className={`w-full py-3 px-4 rounded-xl flex items-center gap-3 font-semibold transition-all text-left cursor-pointer ${
                     isActive
-                      ? "bg-gradient-to-r from-gold-500 to-gold-400 text-white shadow-md shadow-gold-500/10"
-                      : "text-stone-400 hover:bg-stone-800 hover:text-stone-100"
+                      ? "bg-gold-500 text-white shadow-md shadow-gold-500/10"
+                      : "text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-850"
                   }`}
                 >
-                  <IconComp size={16} />
-                  {item.name}
+                  <Icon size={16} />
+                  <span>{item.name}</span>
                 </button>
               );
             })}
           </nav>
+        </div>
 
-          {/* Sidebar Footer */}
-          <div className="p-4 border-t border-stone-800 flex flex-col gap-2">
-            <div className="flex items-center gap-3 px-3 py-2">
-              <div className="w-8 h-8 rounded-full bg-stone-800 border border-stone-750 flex items-center justify-center">
-                <span className="text-white text-xs font-serif">A</span>
-              </div>
-              <div className="overflow-hidden">
-                <span className="text-stone-200 block truncate font-medium">{user.email}</span>
-                <span className="text-[9px] text-stone-500 uppercase tracking-wider block">Diretor</span>
-              </div>
+        <div className="mt-8 pt-6 border-t border-stone-200 dark:border-stone-850 flex flex-col gap-4">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-gold-100 dark:bg-gold-950/20 text-gold-600 flex items-center justify-center font-bold">
+              {user.email?.[0].toUpperCase()}
             </div>
-            
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-red-400 hover:bg-stone-800 hover:text-red-300 font-semibold uppercase tracking-wider text-[10px] cursor-pointer mt-2"
+            <div className="overflow-hidden">
+              <span className="font-semibold block text-stone-800 dark:text-stone-200 truncate">{user.email}</span>
+              <span className="text-[9px] text-stone-400 block font-light">Administrador</span>
+            </div>
+          </div>
+
+          <button
+            onClick={handleLogout}
+            className="w-full py-2.5 px-4 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/15 rounded-xl flex items-center gap-3 font-semibold transition-colors cursor-pointer text-left"
+          >
+            <LogOut size={16} />
+            <span>Sair do Sistema</span>
+          </button>
+        </div>
+      </aside>
+
+      {/* Main content body */}
+      <main className="flex-1 p-6 md:p-10 overflow-y-auto max-w-7xl">
+        {/* Global Search & Action Bar */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+          <div>
+            <h2 className="font-serif text-2xl text-stone-850 dark:text-stone-100 font-medium capitalize">
+              {activeTab === "galeria" ? "Galeria & Casos" : activeTab === "configuracoes" ? "Configurações" : activeTab}
+            </h2>
+            <p className="text-[10px] text-stone-400 font-light mt-1">
+              Controle comercial e de catálogo da {clinicConfig.name}.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            <div className="relative flex-1 sm:w-64">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400" size={14} />
+              <input
+                type="text"
+                placeholder="Pesquisar..."
+                value={globalSearch}
+                onChange={(e) => setGlobalSearch(e.target.value)}
+                className="w-full pl-9 pr-4 py-2 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 dark:text-white"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Dynamic Admin View Tabs */}
+        <AnimatePresence mode="wait">
+          {/* TAB 1: DASHBOARD */}
+          {activeTab === "dashboard" && (
+            <motion.div
+              key="dashboard"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="flex flex-col gap-8"
             >
-              <LogOut size={14} />
-              Sair do Painel
-            </button>
-          </div>
-        </aside>
-      )}
-
-      {/* MAIN CONTAINER */}
-      <main className="flex-1 flex flex-col overflow-x-hidden min-h-0 bg-stone-50 dark:bg-stone-950">
-        {/* Main top header */}
-        <header className="bg-white dark:bg-stone-900 border-b border-stone-200/50 dark:border-stone-850/50 px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shrink-0">
-          <div className="flex items-center gap-3">
-            <h1 className="font-serif text-lg font-semibold tracking-wide text-stone-800 dark:text-white capitalize">
-              {activeTab.replace("-", " ")}
-            </h1>
-          </div>
-
-          {/* Quick Search */}
-          <div className="relative w-full sm:w-64">
-            <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400" />
-            <input
-              type="text"
-              value={globalSearch}
-              onChange={(e) => setGlobalSearch(e.target.value)}
-              placeholder="Busca global rápida..."
-              className="w-full pl-10 pr-4 py-2 bg-stone-100 dark:bg-stone-950/60 border border-transparent focus:border-gold-300 dark:focus:border-gold-800 rounded-full outline-none transition-all text-[11px] dark:text-white"
-            />
-          </div>
-        </header>
-
-        {/* Dynamic sub tab layout wrapper */}
-        <div className="flex-1 p-6 overflow-y-auto">
-          
-          {/* TAB 1: OVERVIEW DASHBOARD */}
-          {activeTab === "dashboard" && mounted && (
-            <div className="flex flex-col gap-8">
-              {/* KPIs Row */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="bg-white dark:bg-stone-900 p-6 rounded-2xl border border-stone-200/40 dark:border-stone-800/40 shadow-sm flex items-center justify-between">
-                  <div>
-                    <span className="text-[10px] text-stone-400 uppercase tracking-widest font-light block">
-                      Agendamentos do Dia
-                    </span>
-                    <span className="text-2xl font-serif font-semibold text-stone-850 dark:text-stone-100 block mt-2">
-                      {todayAppointments.length}
-                    </span>
-                  </div>
-                  <div className="p-3 bg-blue-50 dark:bg-blue-950/20 text-blue-500 rounded-xl">
-                    <CalendarIcon size={20} />
+              {/* Statistic cards row */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className={`${cardStyleClass} p-5 rounded-2xl`}>
+                  <span className="text-[10px] text-stone-400 uppercase tracking-widest font-light">Agendados Hoje</span>
+                  <div className="flex items-baseline gap-2 mt-2">
+                    <span className="font-serif text-2xl font-semibold text-stone-850 dark:text-stone-100">{todayAppointments.length}</span>
+                    <span className="text-[10px] text-stone-450">atendimentos</span>
                   </div>
                 </div>
 
-                <div className="bg-white dark:bg-stone-900 p-6 rounded-2xl border border-stone-200/40 dark:border-stone-800/40 shadow-sm flex items-center justify-between">
-                  <div>
-                    <span className="text-[10px] text-stone-400 uppercase tracking-widest font-light block">
-                      Clientes Cadastrados
-                    </span>
-                    <span className="text-2xl font-serif font-semibold text-stone-850 dark:text-stone-100 block mt-2">
-                      {clients.length}
-                    </span>
-                  </div>
-                  <div className="p-3 bg-green-50 dark:bg-green-950/20 text-green-500 rounded-xl">
-                    <Users size={20} />
+                <div className={`${cardStyleClass} p-5 rounded-2xl`}>
+                  <span className="text-[10px] text-stone-400 uppercase tracking-widest font-light">Clientes Ativos</span>
+                  <div className="flex items-baseline gap-2 mt-2">
+                    <span className="font-serif text-2xl font-semibold text-stone-850 dark:text-stone-100">{clients.length}</span>
+                    <span className="text-[10px] text-stone-450">fichas</span>
                   </div>
                 </div>
 
-                <div className="bg-white dark:bg-stone-900 p-6 rounded-2xl border border-stone-200/40 dark:border-stone-800/40 shadow-sm flex items-center justify-between">
-                  <div>
-                    <span className="text-[10px] text-stone-400 uppercase tracking-widest font-light block">
-                      Faturamento Líquido
-                    </span>
-                    <span className="text-2xl font-serif font-semibold text-gold-550 dark:text-gold-400 block mt-2">
-                      R$ {netProfit.toLocaleString("pt-BR")}
-                    </span>
-                  </div>
-                  <div className="p-3 bg-amber-50 dark:bg-amber-950/20 text-gold-500 rounded-xl">
-                    <DollarSign size={20} />
+                <div className={`${cardStyleClass} p-5 rounded-2xl`}>
+                  <span className="text-[10px] text-stone-400 uppercase tracking-widest font-light">Fotos na Galeria</span>
+                  <div className="flex items-baseline gap-2 mt-2">
+                    <span className="font-serif text-2xl font-semibold text-stone-850 dark:text-stone-100">{gallery.length + beforeAfter.length}</span>
+                    <span className="text-[10px] text-stone-450">imagens</span>
                   </div>
                 </div>
 
-                <div className="bg-white dark:bg-stone-900 p-6 rounded-2xl border border-stone-200/40 dark:border-stone-800/40 shadow-sm flex items-center justify-between">
-                  <div>
-                    <span className="text-[10px] text-stone-400 uppercase tracking-widest font-light block">
-                      Avaliações Ativas
-                    </span>
-                    <span className="text-2xl font-serif font-semibold text-stone-850 dark:text-stone-100 block mt-2">
-                      {testimonials.length}
-                    </span>
-                  </div>
-                  <div className="p-3 bg-purple-50 dark:bg-purple-950/20 text-purple-500 rounded-xl">
-                    <MessageSquare size={20} />
+                <div className={`${cardStyleClass} p-5 rounded-2xl`}>
+                  <span className="text-[10px] text-stone-400 uppercase tracking-widest font-light">Avaliações</span>
+                  <div className="flex items-baseline gap-2 mt-2">
+                    <span className="font-serif text-2xl font-semibold text-stone-850 dark:text-stone-100">{testimonials.length}</span>
+                    <span className="text-[10px] text-stone-450">comentários</span>
                   </div>
                 </div>
               </div>
 
-              {/* Charts Row */}
+              {/* Chart and daily preview */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                {/* Revenue graph */}
-                <div className="lg:col-span-8 bg-white dark:bg-stone-900 p-6 rounded-2xl border border-stone-200/40 dark:border-stone-800/40 shadow-sm">
-                  <h3 className="font-serif text-sm font-semibold tracking-wide text-stone-800 dark:text-stone-200 mb-6 flex items-center gap-2">
-                    <TrendingUp size={16} className="text-gold-550" /> Fluxo de Caixa Financeiro (Lucro Líquido)
-                  </h3>
+                {/* Bookings Chart */}
+                <div className={`${cardStyleClass} lg:col-span-8 p-6 rounded-2xl flex flex-col gap-6`}>
+                  <span className="font-serif text-sm font-semibold text-stone-800 dark:text-stone-200">Volumetria de Agendamentos (Últimos Dias)</span>
                   <div className="h-64 w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={monthlyRevenueData}>
-                        <defs>
-                          <linearGradient id="colorLucro" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#C5A880" stopOpacity={0.4}/>
-                            <stop offset="95%" stopColor="#C5A880" stopOpacity={0.0}/>
-                          </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
-                        <XAxis dataKey="name" stroke="#888888" fontSize={10} tickLine={false} axisLine={false} />
-                        <YAxis stroke="#888888" fontSize={10} tickLine={false} axisLine={false} />
-                        <Tooltip />
-                        <Area type="monotone" dataKey="lucro" name="Lucro Líquido (R$)" stroke="#C5A880" fillOpacity={1} fill="url(#colorLucro)" strokeWidth={2} />
-                      </AreaChart>
-                    </ResponsiveContainer>
+                    {chartData.length > 0 ? (
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={chartData}>
+                          <XAxis dataKey="date" stroke="#888888" fontSize={9} tickLine={false} axisLine={false} />
+                          <YAxis stroke="#888888" fontSize={9} tickLine={false} axisLine={false} allowDecimals={false} />
+                          <Tooltip contentStyle={{ background: "#1c1917", border: "none", borderRadius: "8px", fontSize: "10px", color: "#fff" }} />
+                          <Bar dataKey="Agendamentos" fill="#c5a880" radius={[4, 4, 0, 0]} barSize={25} />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <div className="h-full flex items-center justify-center text-stone-400">Nenhum agendamento registrado.</div>
+                    )}
                   </div>
                 </div>
 
-                {/* Categorized bar graph */}
-                <div className="lg:col-span-4 bg-white dark:bg-stone-900 p-6 rounded-2xl border border-stone-200/40 dark:border-stone-800/40 shadow-sm">
-                  <h3 className="font-serif text-sm font-semibold tracking-wide text-stone-800 dark:text-stone-200 mb-6">
-                    Procedimentos por Categoria
-                  </h3>
-                  <div className="h-64 w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={apptByCategoryData}>
-                        <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
-                        <XAxis dataKey="name" stroke="#888888" fontSize={10} tickLine={false} axisLine={false} />
-                        <YAxis stroke="#888888" fontSize={10} tickLine={false} axisLine={false} />
-                        <Tooltip />
-                        <Bar dataKey="agendamentos" name="Agendamentos" fill="#b0926a" radius={[6, 6, 0, 0]} />
-                      </BarChart>
-                    </ResponsiveContainer>
+                {/* Today's schedule list */}
+                <div className={`${cardStyleClass} lg:col-span-4 p-6 rounded-2xl flex flex-col gap-4`}>
+                  <span className="font-serif text-sm font-semibold text-stone-800 dark:text-stone-200">Agenda de Hoje</span>
+                  <div className="flex flex-col gap-3 overflow-y-auto max-h-[260px] pr-1">
+                    {todayAppointments.length > 0 ? (
+                      todayAppointments.map((appt) => (
+                        <div key={appt.id} className="p-3 bg-stone-50 dark:bg-stone-950 rounded-xl border border-stone-150 dark:border-stone-850 flex items-center justify-between gap-3">
+                          <div>
+                            <span className="font-semibold block text-stone-750 dark:text-stone-200 leading-snug">{appt.clientName}</span>
+                            <span className="text-[9px] text-stone-400 uppercase tracking-widest mt-0.5 block">{appt.procedureName}</span>
+                          </div>
+                          <span className="px-2 py-1 bg-gold-100/50 dark:bg-gold-950/20 text-gold-600 rounded text-[9px] font-semibold flex items-center gap-1">
+                            <Clock size={10} /> {appt.time}
+                          </span>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="py-8 text-center text-stone-400 bg-stone-50/50 dark:bg-stone-950/10 rounded-xl border border-dashed border-stone-200 dark:border-stone-800">
+                        Nenhum atendimento agendado para hoje.
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
-
-              {/* Next appointments table */}
-              <div className="bg-white dark:bg-stone-900 rounded-2xl border border-stone-200/40 dark:border-stone-800/40 shadow-sm p-6">
-                <h3 className="font-serif text-sm font-semibold tracking-wide text-stone-800 dark:text-stone-200 mb-6">
-                  Próximos Atendimentos
-                </h3>
-                <div className="overflow-x-auto">
-                  <table className="w-full border-collapse text-left text-xs font-light">
-                    <thead>
-                      <tr className="border-b border-stone-100 dark:border-stone-800 text-stone-400 font-medium">
-                        <th className="py-3 px-4">Paciente</th>
-                        <th className="py-3 px-4">Procedimento</th>
-                        <th className="py-3 px-4">Especialista</th>
-                        <th className="py-3 px-4">Data</th>
-                        <th className="py-3 px-4">Horário</th>
-                        <th className="py-3 px-4">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-stone-100 dark:divide-stone-800/40">
-                      {appointments.slice(0, 4).map((appt) => (
-                        <tr key={appt.id} className="text-stone-600 dark:text-stone-300">
-                          <td className="py-3.5 px-4 font-semibold text-stone-800 dark:text-stone-100">
-                            {appt.clientName}
-                          </td>
-                          <td className="py-3.5 px-4">{appt.procedureName}</td>
-                          <td className="py-3.5 px-4">{appt.professionalName}</td>
-                          <td className="py-3.5 px-4">
-                            {new Date(appt.date + "T00:00:00").toLocaleDateString("pt-BR")}
-                          </td>
-                          <td className="py-3.5 px-4 font-medium">{appt.time}</td>
-                          <td className="py-3.5 px-4">
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-green-50 dark:bg-green-950/20 border border-green-200/30 text-green-600 text-[10px] font-semibold uppercase">
-                              <CheckCircle size={10} /> {appt.status}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
+            </motion.div>
           )}
 
-          {/* TAB 2: AGENDA MANAGER */}
+          {/* TAB 2: AGENDA */}
           {activeTab === "agenda" && (
-            <div className="flex flex-col gap-6 bg-white dark:bg-stone-900 p-6 rounded-2xl border border-stone-200/40 dark:border-stone-800/40 shadow-sm">
-              <div className="flex items-center justify-between pb-4 border-b border-stone-100 dark:border-stone-800/40">
-                <span className="text-xs text-stone-500 font-light">
-                  Gerenciamento de datas, horários e profissionais.
-                </span>
+            <motion.div
+              key="agenda"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className={`${cardStyleClass} p-6 rounded-2xl flex flex-col`}
+            >
+              <div className="flex justify-between items-center mb-6">
+                <span className="font-serif text-sm font-semibold text-stone-850 dark:text-stone-200">Lista de Agendamentos</span>
                 <button
                   onClick={() => handleOpenAddModal("appointment")}
-                  className="flex items-center gap-1.5 text-xs font-semibold px-4 py-2 bg-gradient-to-r from-gold-500 to-gold-400 text-white rounded-lg cursor-pointer"
+                  className={`px-4 py-2 bg-gold-500 hover:bg-gold-600 text-white font-semibold flex items-center gap-1.5 ${btnRadius} shadow-sm cursor-pointer`}
                 >
                   <Plus size={14} /> Novo Agendamento
                 </button>
               </div>
 
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse text-left text-xs font-light">
+              <div className="overflow-x-auto w-full">
+                <table className="w-full text-left border-collapse min-w-[700px]">
                   <thead>
-                    <tr className="border-b border-stone-100 dark:border-stone-800 text-stone-400">
-                      <th className="py-3 px-4">Código</th>
-                      <th className="py-3 px-4">Paciente</th>
-                      <th className="py-3 px-4">Telefone</th>
-                      <th className="py-3 px-4">Procedimento</th>
-                      <th className="py-3 px-4">Especialista</th>
-                      <th className="py-3 px-4">Data/Hora</th>
-                      <th className="py-3 px-4">Faturamento</th>
-                      <th className="py-3 px-4 text-center">Ações</th>
+                    <tr className="border-b border-stone-200 dark:border-stone-850 text-stone-400">
+                      <th className="pb-3 font-medium">Paciente</th>
+                      <th className="pb-3 font-medium">Contato</th>
+                      <th className="pb-3 font-medium">Procedimento</th>
+                      <th className="pb-3 font-medium">Data/Hora</th>
+                      <th className="pb-3 font-medium text-right">Valor</th>
+                      <th className="pb-3 font-medium text-center">Status</th>
+                      <th className="pb-3 font-medium text-center">Ações</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-stone-100 dark:divide-stone-800/40">
+                  <tbody className="divide-y divide-stone-100 dark:divide-stone-900">
                     {appointments
-                      .filter((a) => a.clientName.toLowerCase().includes(globalSearch.toLowerCase()) || a.procedureName.toLowerCase().includes(globalSearch.toLowerCase()))
+                      .filter((a) =>
+                        a.clientName.toLowerCase().includes(globalSearch.toLowerCase()) ||
+                        a.procedureName.toLowerCase().includes(globalSearch.toLowerCase())
+                      )
                       .map((appt) => (
                         <tr key={appt.id} className="text-stone-600 dark:text-stone-300">
-                          <td className="py-3.5 px-4 font-mono text-[10px] text-stone-450">{appt.id}</td>
-                          <td className="py-3.5 px-4 font-semibold text-stone-850 dark:text-stone-100">{appt.clientName}</td>
-                          <td className="py-3.5 px-4">{appt.clientPhone}</td>
-                          <td className="py-3.5 px-4">{appt.procedureName}</td>
-                          <td className="py-3.5 px-4">{appt.professionalName}</td>
-                          <td className="py-3.5 px-4">
-                            <span className="block font-medium">
-                              {new Date(appt.date + "T00:00:00").toLocaleDateString("pt-BR")}
+                          <td className="py-4 font-semibold text-stone-850 dark:text-stone-255">{appt.clientName}</td>
+                          <td className="py-4">{appt.clientPhone}</td>
+                          <td className="py-4">{appt.procedureName}</td>
+                          <td className="py-4">
+                            <strong>{new Date(appt.date + "T00:00:00").toLocaleDateString("pt-BR")}</strong> às {appt.time}
+                          </td>
+                          <td className="py-4 text-right font-serif font-medium">
+                            R$ {appt.price?.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                          </td>
+                          <td className="py-4 text-center">
+                            <span
+                              className={`px-2 py-0.5 rounded text-[9px] uppercase tracking-widest font-semibold ${
+                                appt.status === "confirmado"
+                                  ? "bg-green-100/60 dark:bg-green-950/20 text-green-600 border border-green-200/30"
+                                  : appt.status === "cancelado"
+                                  ? "bg-red-100/60 dark:bg-red-950/20 text-red-600 border border-red-200/30"
+                                  : "bg-amber-100/60 dark:bg-amber-950/20 text-amber-600 border border-amber-200/30"
+                              }`}
+                            >
+                              {appt.status}
                             </span>
-                            <span className="text-[10px] text-stone-400 font-light block">{appt.time}</span>
                           </td>
-                          <td className="py-3.5 px-4 font-serif font-semibold text-gold-600 dark:text-gold-455">
-                            R$ {appt.price.toLocaleString("pt-BR")}
-                          </td>
-                          <td className="py-3.5 px-4">
+                          <td className="py-4">
                             <div className="flex items-center justify-center gap-2">
                               <button
-                                onClick={() => handleEditModal("appointment", appt)}
-                                className="p-1 text-stone-400 hover:text-gold-500 rounded border border-transparent hover:border-stone-200 dark:hover:border-stone-800 cursor-pointer"
+                                onClick={() => handleOpenEditModal("appointment", appt.id)}
+                                className="p-1 text-stone-400 hover:text-stone-800 dark:hover:text-stone-200"
+                                title="Editar"
                               >
-                                <Edit size={13} />
+                                <Edit size={14} />
                               </button>
                               <button
                                 onClick={() => handleDeleteItem("appointment", appt.id)}
-                                className="p-1 text-stone-400 hover:text-red-500 rounded border border-transparent hover:border-stone-200 dark:hover:border-stone-800 cursor-pointer"
+                                className="p-1 text-stone-400 hover:text-red-500"
+                                title="Excluir"
                               >
-                                <Trash2 size={13} />
+                                <Trash2 size={14} />
                               </button>
                             </div>
                           </td>
@@ -673,65 +636,68 @@ export default function AdminPanel() {
                   </tbody>
                 </table>
               </div>
-            </div>
+            </motion.div>
           )}
 
-          {/* TAB 3: CLIENTS CRUD */}
+          {/* TAB 3: CLIENTES */}
           {activeTab === "clientes" && (
-            <div className="flex flex-col gap-6 bg-white dark:bg-stone-900 p-6 rounded-2xl border border-stone-200/40 dark:border-stone-800/40 shadow-sm">
-              <div className="flex items-center justify-between pb-4 border-b border-stone-100 dark:border-stone-800/40">
-                <span className="text-xs text-stone-500 font-light">
-                  Lista de prontuários simples, contatos e observações clínicas.
-                </span>
+            <motion.div
+              key="clientes"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className={`${cardStyleClass} p-6 rounded-2xl flex flex-col`}
+            >
+              <div className="flex justify-between items-center mb-6">
+                <span className="font-serif text-sm font-semibold text-stone-850 dark:text-stone-200">Fichas Cadastrais</span>
                 <button
                   onClick={() => handleOpenAddModal("client")}
-                  className="flex items-center gap-1.5 text-xs font-semibold px-4 py-2 bg-gradient-to-r from-gold-500 to-gold-400 text-white rounded-lg cursor-pointer"
+                  className={`px-4 py-2 bg-gold-500 hover:bg-gold-600 text-white font-semibold flex items-center gap-1.5 ${btnRadius} shadow-sm cursor-pointer`}
                 >
-                  <Plus size={14} /> Cadastrar Cliente
+                  <Plus size={14} /> Novo Cliente
                 </button>
               </div>
 
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse text-left text-xs font-light">
+              <div className="overflow-x-auto w-full">
+                <table className="w-full text-left border-collapse min-w-[700px]">
                   <thead>
-                    <tr className="border-b border-stone-100 dark:border-stone-800 text-stone-400">
-                      <th className="py-3 px-4">Nome</th>
-                      <th className="py-3 px-4">Telefone</th>
-                      <th className="py-3 px-4">WhatsApp</th>
-                      <th className="py-3 px-4">E-mail</th>
-                      <th className="py-3 px-4">Nascimento</th>
-                      <th className="py-3 px-4">Observações Clínicas</th>
-                      <th className="py-3 px-4 text-center">Ações</th>
+                    <tr className="border-b border-stone-200 dark:border-stone-850 text-stone-400">
+                      <th className="pb-3 font-medium">Nome do Paciente</th>
+                      <th className="pb-3 font-medium">Telefone</th>
+                      <th className="pb-3 font-medium">WhatsApp</th>
+                      <th className="pb-3 font-medium">E-mail</th>
+                      <th className="pb-3 font-medium">Observações Clínicas / Alergias</th>
+                      <th className="pb-3 font-medium text-center">Ações</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-stone-100 dark:divide-stone-800/40">
+                  <tbody className="divide-y divide-stone-100 dark:divide-stone-900">
                     {clients
-                      .filter((c) => c.name.toLowerCase().includes(globalSearch.toLowerCase()) || c.email.toLowerCase().includes(globalSearch.toLowerCase()))
-                      .map((c) => (
-                        <tr key={c.id} className="text-stone-600 dark:text-stone-300">
-                          <td className="py-3.5 px-4 font-semibold text-stone-850 dark:text-stone-100">{c.name}</td>
-                          <td className="py-3.5 px-4">{c.phone}</td>
-                          <td className="py-3.5 px-4">{c.whatsapp}</td>
-                          <td className="py-3.5 px-4">{c.email}</td>
-                          <td className="py-3.5 px-4">
-                            {c.birthDate ? new Date(c.birthDate + "T00:00:00").toLocaleDateString("pt-BR") : "Não inf."}
+                      .filter((c) =>
+                        c.name.toLowerCase().includes(globalSearch.toLowerCase()) ||
+                        c.email.toLowerCase().includes(globalSearch.toLowerCase())
+                      )
+                      .map((client) => (
+                        <tr key={client.id} className="text-stone-600 dark:text-stone-300">
+                          <td className="py-4 font-semibold text-stone-850 dark:text-stone-255">{client.name}</td>
+                          <td className="py-4">{client.phone}</td>
+                          <td className="py-4">{client.whatsapp}</td>
+                          <td className="py-4">{client.email}</td>
+                          <td className="py-4 font-light text-[11px] max-w-xs truncate" title={client.observations}>
+                            {client.observations || "Nenhuma observação clínica registrada."}
                           </td>
-                          <td className="py-3.5 px-4 max-w-xs truncate" title={c.observations}>
-                            {c.observations || "Nenhuma observação cadastrada."}
-                          </td>
-                          <td className="py-3.5 px-4">
+                          <td className="py-4">
                             <div className="flex items-center justify-center gap-2">
                               <button
-                                onClick={() => handleEditModal("client", c)}
-                                className="p-1 text-stone-400 hover:text-gold-500 rounded border border-transparent hover:border-stone-200 dark:hover:border-stone-800 cursor-pointer"
+                                onClick={() => handleOpenEditModal("client", client.id)}
+                                className="p-1 text-stone-400 hover:text-stone-800 dark:hover:text-stone-200"
                               >
-                                <Edit size={13} />
+                                <Edit size={14} />
                               </button>
                               <button
-                                onClick={() => handleDeleteItem("client", c.id)}
-                                className="p-1 text-stone-400 hover:text-red-500 rounded border border-transparent hover:border-stone-200 dark:hover:border-stone-800 cursor-pointer"
+                                onClick={() => handleDeleteItem("client", client.id)}
+                                className="p-1 text-stone-400 hover:text-red-500"
                               >
-                                <Trash2 size={13} />
+                                <Trash2 size={14} />
                               </button>
                             </div>
                           </td>
@@ -740,392 +706,175 @@ export default function AdminPanel() {
                   </tbody>
                 </table>
               </div>
-            </div>
+            </motion.div>
           )}
 
-          {/* TAB 4: PROCEDURES CRUD */}
+          {/* TAB 4: GALERIA & CASOS */}
+          {activeTab === "galeria" && (
+            <motion.div
+              key="galeria"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="flex flex-col gap-6"
+            >
+              {/* Gallery Toggle Bar */}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setGallerySubTab("photos")}
+                  className={`px-4 py-2 text-xs uppercase tracking-widest font-semibold ${btnRadius} transition-all cursor-pointer ${
+                    gallerySubTab === "photos"
+                      ? "bg-gold-500 text-white shadow-md"
+                      : "text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-200 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800"
+                  }`}
+                >
+                  Fotos da Recepção & Salas
+                </button>
+                <button
+                  onClick={() => setGallerySubTab("before-after")}
+                  className={`px-4 py-2 text-xs uppercase tracking-widest font-semibold ${btnRadius} transition-all cursor-pointer ${
+                    gallerySubTab === "before-after"
+                      ? "bg-gold-500 text-white shadow-md"
+                      : "text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-200 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800"
+                  }`}
+                >
+                  Casos Antes e Depois
+                </button>
+              </div>
+
+              {gallerySubTab === "photos" ? (
+                <div className={`${cardStyleClass} p-6 rounded-2xl flex flex-col`}>
+                  <div className="flex justify-between items-center mb-6">
+                    <span className="font-serif text-sm font-semibold text-stone-850 dark:text-stone-200">Portfólio de Fotos</span>
+                    <button
+                      onClick={() => handleOpenAddModal("gallery")}
+                      className={`px-4 py-2 bg-gold-500 hover:bg-gold-600 text-white font-semibold flex items-center gap-1.5 ${btnRadius} shadow-sm cursor-pointer`}
+                    >
+                      <Plus size={14} /> Adicionar Foto
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+                    {gallery
+                      .filter((g) => g.title.toLowerCase().includes(globalSearch.toLowerCase()))
+                      .map((photo) => (
+                        <div key={photo.id} className="relative group rounded-xl overflow-hidden border border-stone-200 dark:border-stone-850 bg-stone-50 dark:bg-stone-950 aspect-video flex flex-col">
+                          <img src={photo.image} alt={photo.title} className="w-full h-28 object-cover" />
+                          <div className="p-3 flex justify-between items-center">
+                            <div className="overflow-hidden mr-2">
+                              <span className="font-semibold block truncate">{photo.title}</span>
+                              <span className="text-[9px] text-stone-400 uppercase tracking-widest mt-0.5 block">{photo.category}</span>
+                            </div>
+                            <button
+                              onClick={() => handleDeleteItem("gallery", photo.id)}
+                              className="p-1 text-stone-400 hover:text-red-500 cursor-pointer shrink-0"
+                            >
+                              <Trash2 size={13} />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              ) : (
+                <div className={`${cardStyleClass} p-6 rounded-2xl flex flex-col`}>
+                  <div className="flex justify-between items-center mb-6">
+                    <span className="font-serif text-sm font-semibold text-stone-850 dark:text-stone-200">Comparativo Antes e Depois</span>
+                    <button
+                      onClick={() => handleOpenAddModal("beforeAfter")}
+                      className={`px-4 py-2 bg-gold-500 hover:bg-gold-600 text-white font-semibold flex items-center gap-1.5 ${btnRadius} shadow-sm cursor-pointer`}
+                    >
+                      <Plus size={14} /> Novo Caso
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                    {beforeAfter
+                      .filter((b) => b.title.toLowerCase().includes(globalSearch.toLowerCase()))
+                      .map((caseItem) => (
+                        <div key={caseItem.id} className="relative group rounded-xl overflow-hidden border border-stone-200 dark:border-stone-850 bg-stone-50 dark:bg-stone-950 flex flex-col">
+                          <div className="grid grid-cols-2 gap-0.5 bg-stone-200 dark:bg-stone-800">
+                            <img src={caseItem.beforeImage} alt="Antes" className="w-full h-24 object-cover" />
+                            <img src={caseItem.afterImage} alt="Depois" className="w-full h-24 object-cover" />
+                          </div>
+                          <div className="p-4 flex justify-between items-center">
+                            <div>
+                              <span className="font-semibold block">{caseItem.title}</span>
+                              <span className="text-[9px] text-stone-400 uppercase tracking-widest mt-0.5 block">{caseItem.category}</span>
+                            </div>
+                            <button
+                              onClick={() => handleDeleteItem("beforeAfter", caseItem.id)}
+                              className="p-1 text-stone-400 hover:text-red-500 cursor-pointer"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          )}
+
+          {/* TAB 5: PROCEDIMENTOS */}
           {activeTab === "procedimentos" && (
-            <div className="flex flex-col gap-6 bg-white dark:bg-stone-900 p-6 rounded-2xl border border-stone-200/40 dark:border-stone-800/40 shadow-sm">
-              <div className="flex items-center justify-between pb-4 border-b border-stone-100 dark:border-stone-800/40">
-                <span className="text-xs text-stone-500 font-light">
-                  Edição do catálogo de tratamentos exibido no site e agendamento.
-                </span>
+            <motion.div
+              key="procedimentos"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className={`${cardStyleClass} p-6 rounded-2xl flex flex-col`}
+            >
+              <div className="flex justify-between items-center mb-6">
+                <span className="font-serif text-sm font-semibold text-stone-850 dark:text-stone-200">Catálogo de Procedimentos</span>
                 <button
                   onClick={() => handleOpenAddModal("procedure")}
-                  className="flex items-center gap-1.5 text-xs font-semibold px-4 py-2 bg-gradient-to-r from-gold-500 to-gold-400 text-white rounded-lg cursor-pointer"
+                  className={`px-4 py-2 bg-gold-500 hover:bg-gold-600 text-white font-semibold flex items-center gap-1.5 ${btnRadius} shadow-sm cursor-pointer`}
                 >
                   <Plus size={14} /> Novo Procedimento
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {procedures.map((proc) => (
-                  <div
-                    key={proc.id}
-                    className="p-5 rounded-2xl border border-stone-250 dark:border-stone-800/40 bg-stone-50 dark:bg-stone-950/20 flex flex-col justify-between"
-                  >
-                    <div>
-                      <div className="flex justify-between items-start mb-3">
-                        <span className="px-2 py-0.5 rounded bg-gold-100/50 dark:bg-gold-950/20 text-gold-600 dark:text-gold-400 text-[8px] uppercase tracking-wider font-semibold">
-                          {proc.category}
-                        </span>
-                        <div className="flex items-center gap-1.5">
-                          <button
-                            onClick={() => handleEditModal("procedure", proc)}
-                            className="p-1 text-stone-400 hover:text-gold-500 cursor-pointer"
-                          >
-                            <Edit size={13} />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteItem("procedure", proc.id)}
-                            className="p-1 text-stone-400 hover:text-red-500 cursor-pointer"
-                          >
-                            <Trash2 size={13} />
-                          </button>
-                        </div>
-                      </div>
-                      <h4 className="font-serif text-sm font-semibold text-stone-850 dark:text-stone-150 mb-2">
-                        {proc.name}
-                      </h4>
-                      <p className="text-[11px] text-stone-500 dark:text-stone-400 line-clamp-3 leading-relaxed font-light mb-4">
-                        {proc.description}
-                      </p>
-                    </div>
-
-                    <div className="pt-3 border-t border-stone-200/50 dark:border-stone-800/30 flex justify-between items-center text-[10px]">
-                      <span className="text-stone-450 font-light">Duração: {proc.duration} min</span>
-                      {proc.price && (
-                        <span className="font-serif font-semibold text-gold-600 dark:text-gold-455">
-                          R$ {proc.price.toLocaleString("pt-BR")}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* TAB 5: GALLERY CRUD */}
-          {activeTab === "galeria" && (
-            <div className="flex flex-col gap-6 bg-white dark:bg-stone-900 p-6 rounded-2xl border border-stone-200/40 dark:border-stone-800/40 shadow-sm">
-              <div className="flex items-center justify-between pb-4 border-b border-stone-100 dark:border-stone-800/40">
-                <span className="text-xs text-stone-500 font-light">
-                  Upload de imagens institucionais e fotos de tratamento na galeria.
-                </span>
-                <button
-                  onClick={() => handleOpenAddModal("gallery")}
-                  className="flex items-center gap-1.5 text-xs font-semibold px-4 py-2 bg-gradient-to-r from-gold-500 to-gold-400 text-white rounded-lg cursor-pointer"
-                >
-                  <Plus size={14} /> Adicionar Foto
-                </button>
-              </div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-                {gallery.map((g) => (
-                  <div
-                    key={g.id}
-                    className="relative group rounded-xl overflow-hidden border border-stone-200 dark:border-stone-800 aspect-[4/3]"
-                  >
-                    <img src={g.image} alt={g.title} className="w-full h-full object-cover" />
-                    
-                    {/* Dark controls overlay */}
-                    <div className="absolute inset-0 bg-stone-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-3 text-white">
-                      <span className="text-[9px] uppercase tracking-widest bg-gold-600/80 px-2 py-0.5 rounded self-start">
-                        {g.category}
-                      </span>
-                      <div className="flex items-center justify-between w-full mt-auto">
-                        <span className="text-[10px] truncate pr-2 font-medium">{g.title}</span>
-                        <button
-                          onClick={() => handleDeleteItem("gallery", g.id)}
-                          className="p-1 text-red-400 hover:text-red-300 transition-colors cursor-pointer shrink-0"
-                          title="Excluir"
-                        >
-                          <Trash2 size={13} />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* TAB 6: BEFORE AND AFTER CRUD */}
-          {activeTab === "antes-e-depois" && (
-            <div className="flex flex-col gap-6 bg-white dark:bg-stone-900 p-6 rounded-2xl border border-stone-200/40 dark:border-stone-800/40 shadow-sm">
-              <div className="flex items-center justify-between pb-4 border-b border-stone-100 dark:border-stone-800/40">
-                <span className="text-xs text-stone-500 font-light">
-                  Gerenciar sliders de comparação interativa de resultados.
-                </span>
-                <button
-                  onClick={() => handleOpenAddModal("beforeAfter")}
-                  className="flex items-center gap-1.5 text-xs font-semibold px-4 py-2 bg-gradient-to-r from-gold-500 to-gold-400 text-white rounded-lg cursor-pointer"
-                >
-                  <Plus size={14} /> Novo Caso Clínico
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {beforeAfter.map((ba) => (
-                  <div
-                    key={ba.id}
-                    className="p-5 rounded-2xl border border-stone-200 dark:border-stone-800/40 bg-stone-50 dark:bg-stone-950/20 flex flex-col gap-4 justify-between"
-                  >
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <span className="px-2 py-0.5 rounded bg-gold-100/50 dark:bg-gold-950/20 text-gold-600 dark:text-gold-400 text-[8px] uppercase tracking-wider font-semibold">
-                          {ba.category}
-                        </span>
-                        <h4 className="font-serif text-sm font-semibold text-stone-850 dark:text-stone-155 mt-2">
-                          {ba.title}
-                        </h4>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <button
-                          onClick={() => handleEditModal("beforeAfter", ba)}
-                          className="p-1 text-stone-400 hover:text-gold-500 cursor-pointer"
-                        >
-                          <Edit size={13} />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteItem("beforeAfter", ba.id)}
-                          className="p-1 text-stone-400 hover:text-red-500 cursor-pointer"
-                        >
-                          <Trash2 size={13} />
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4 aspect-video">
-                      <div className="relative rounded-lg overflow-hidden border border-stone-200 dark:border-stone-800">
-                        <img src={ba.beforeImage} alt="Antes" className="w-full h-full object-cover" />
-                        <span className="absolute bottom-2 left-2 px-1.5 py-0.5 bg-black/60 rounded text-[9px] text-white">Antes</span>
-                      </div>
-                      <div className="relative rounded-lg overflow-hidden border border-stone-200 dark:border-stone-800">
-                        <img src={ba.afterImage} alt="Depois" className="w-full h-full object-cover" />
-                        <span className="absolute bottom-2 left-2 px-1.5 py-0.5 bg-black/60 rounded text-[9px] text-white">Depois</span>
-                      </div>
-                    </div>
-
-                    <p className="text-[11px] text-stone-500 dark:text-stone-400 leading-relaxed font-light line-clamp-2">
-                      {ba.description}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* TAB 7: TESTIMONIALS MANAGER */}
-          {activeTab === "depoimentos" && (
-            <div className="flex flex-col gap-6 bg-white dark:bg-stone-900 p-6 rounded-2xl border border-stone-200/40 dark:border-stone-800/40 shadow-sm">
-              <div className="flex items-center justify-between pb-4 border-b border-stone-100 dark:border-stone-800/40">
-                <span className="text-xs text-stone-500 font-light">
-                  Moderação e modulação de depoimentos e notas do site.
-                </span>
-                <button
-                  onClick={() => handleOpenAddModal("testimonial")}
-                  className="flex items-center gap-1.5 text-xs font-semibold px-4 py-2 bg-gradient-to-r from-gold-500 to-gold-400 text-white rounded-lg cursor-pointer"
-                >
-                  <Plus size={14} /> Inserir Depoimento
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {testimonials.map((t) => (
-                  <div
-                    key={t.id}
-                    className="p-5 rounded-2xl border border-stone-200 dark:border-stone-800/40 bg-stone-50 dark:bg-stone-950/20 flex flex-col justify-between"
-                  >
-                    <div>
-                      <div className="flex justify-between items-center mb-4">
-                        <div className="flex items-center gap-0.5 text-gold-450">
-                          {Array.from({ length: t.rating }).map((_, i) => (
-                            <Star key={i} size={12} className="fill-gold-450 text-gold-450" />
-                          ))}
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          <button
-                            onClick={() => handleEditModal("testimonial", t)}
-                            className="p-1 text-stone-400 hover:text-gold-500 cursor-pointer"
-                          >
-                            <Edit size={13} />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteItem("testimonial", t.id)}
-                            className="p-1 text-stone-400 hover:text-red-500 cursor-pointer"
-                          >
-                            <Trash2 size={13} />
-                          </button>
-                        </div>
-                      </div>
-                      <p className="text-[11px] text-stone-500 dark:text-stone-400 leading-relaxed font-light italic mb-4">
-                        &ldquo;{t.comment}&rdquo;
-                      </p>
-                    </div>
-
-                    <div className="flex items-center gap-3 pt-3 border-t border-stone-200/50 dark:border-stone-800/30">
-                      <img src={t.photo} alt={t.name} className="w-8 h-8 rounded-full object-cover" />
-                      <div>
-                        <h4 className="font-semibold text-stone-800 dark:text-stone-250 text-xs">{t.name}</h4>
-                        <span className="text-[9px] uppercase tracking-widest text-stone-400 dark:text-stone-500 font-light">
-                          {t.role}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* TAB 8: STAFF MANAGEMENT */}
-          {activeTab === "equipe" && (
-            <div className="flex flex-col gap-6 bg-white dark:bg-stone-900 p-6 rounded-2xl border border-stone-200/40 dark:border-stone-800/40 shadow-sm">
-              <div className="flex items-center justify-between pb-4 border-b border-stone-100 dark:border-stone-800/40">
-                <span className="text-xs text-stone-500 font-light">
-                  Cadastro de profissionais, especialidades e escalas horárias.
-                </span>
-                <button
-                  onClick={() => handleOpenAddModal("professional")}
-                  className="flex items-center gap-1.5 text-xs font-semibold px-4 py-2 bg-gradient-to-r from-gold-500 to-gold-400 text-white rounded-lg cursor-pointer"
-                >
-                  <Plus size={14} /> Novo Especialista
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {professionals.map((prof) => (
-                  <div
-                    key={prof.id}
-                    className="p-5 rounded-2xl border border-stone-200 dark:border-stone-800/40 bg-stone-50 dark:bg-stone-950/20 flex flex-col justify-between"
-                  >
-                    <div className="flex flex-col items-center text-center">
-                      <div className="relative w-16 h-16 rounded-full overflow-hidden border border-gold-300/20 mb-3">
-                        <img src={prof.image} alt={prof.name} className="w-full h-full object-cover" />
-                      </div>
-                      <h4 className="font-semibold text-stone-850 dark:text-stone-150 text-xs">{prof.name}</h4>
-                      <span className="text-[9px] uppercase tracking-widest text-gold-550 mt-0.5">{prof.role}</span>
-                      <p className="text-[10px] text-stone-500 dark:text-stone-400 line-clamp-3 leading-relaxed font-light mt-3">
-                        {prof.bio}
-                      </p>
-                    </div>
-
-                    <div className="pt-4 border-t border-stone-200/50 dark:border-stone-800/30 mt-4 flex justify-between items-center">
-                      <span className="text-[9px] text-stone-400 block font-light">
-                        {prof.availableHours.length} horários ativos
-                      </span>
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={() => handleEditModal("professional", prof)}
-                          className="p-1 text-stone-400 hover:text-gold-500 cursor-pointer"
-                        >
-                          <Edit size={13} />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteItem("professional", prof.id)}
-                          className="p-1 text-stone-400 hover:text-red-500 cursor-pointer"
-                        >
-                          <Trash2 size={13} />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* TAB 9: FINANCIAL CONTROL */}
-          {activeTab === "financeiro" && (
-            <div className="flex flex-col gap-6 bg-white dark:bg-stone-900 p-6 rounded-2xl border border-stone-200/40 dark:border-stone-800/40 shadow-sm">
-              <div className="flex items-center justify-between pb-4 border-b border-stone-100 dark:border-stone-800/40">
-                <div className="flex gap-6">
-                  <div>
-                    <span className="text-[10px] text-stone-400 block font-light">Total Entradas</span>
-                    <span className="text-sm font-serif font-semibold text-green-600 block mt-0.5">
-                      R$ {totalRevenue.toLocaleString("pt-BR")}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-[10px] text-stone-400 block font-light">Total Saídas</span>
-                    <span className="text-sm font-serif font-semibold text-red-500 block mt-0.5">
-                      R$ {totalExpenses.toLocaleString("pt-BR")}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-[10px] text-stone-400 block font-light">Lucro Líquido</span>
-                    <span className="text-sm font-serif font-semibold text-gold-600 dark:text-gold-455 block mt-0.5">
-                      R$ {netProfit.toLocaleString("pt-BR")}
-                    </span>
-                  </div>
-                </div>
-                <button
-                  onClick={() => handleOpenAddModal("financial")}
-                  className="flex items-center gap-1.5 text-xs font-semibold px-4 py-2 bg-gradient-to-r from-gold-500 to-gold-400 text-white rounded-lg cursor-pointer"
-                >
-                  <Plus size={14} /> Registrar Transação
-                </button>
-              </div>
-
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse text-left text-xs font-light">
+              <div className="overflow-x-auto w-full">
+                <table className="w-full text-left border-collapse min-w-[700px]">
                   <thead>
-                    <tr className="border-b border-stone-100 dark:border-stone-800 text-stone-400">
-                      <th className="py-3 px-4">Data</th>
-                      <th className="py-3 px-4">Descrição</th>
-                      <th className="py-3 px-4">Categoria</th>
-                      <th className="py-3 px-4">Tipo</th>
-                      <th className="py-3 px-4">Valor</th>
-                      <th className="py-3 px-4 text-center">Ações</th>
+                    <tr className="border-b border-stone-200 dark:border-stone-850 text-stone-400">
+                      <th className="pb-3 font-medium">Nome do Tratamento</th>
+                      <th className="pb-3 font-medium">Categoria</th>
+                      <th className="pb-3 font-medium">Duração</th>
+                      <th className="pb-3 font-medium text-right">Valor Inicial</th>
+                      <th className="pb-3 font-medium">Descrição Resumida</th>
+                      <th className="pb-3 font-medium text-center">Ações</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-stone-100 dark:divide-stone-800/40">
-                    {financialRecords
-                      .filter((f) => f.description.toLowerCase().includes(globalSearch.toLowerCase()))
-                      .map((record) => (
-                        <tr key={record.id} className="text-stone-600 dark:text-stone-300">
-                          <td className="py-3.5 px-4">
-                            {new Date(record.date + "T00:00:00").toLocaleDateString("pt-BR")}
+                  <tbody className="divide-y divide-stone-100 dark:divide-stone-900">
+                    {procedures
+                      .filter((p) => p.name.toLowerCase().includes(globalSearch.toLowerCase()))
+                      .map((proc) => (
+                        <tr key={proc.id} className="text-stone-600 dark:text-stone-300">
+                          <td className="py-4 font-semibold text-stone-850 dark:text-stone-255">{proc.name}</td>
+                          <td className="py-4 capitalize">{proc.category}</td>
+                          <td className="py-4">{proc.duration} min</td>
+                          <td className="py-4 text-right font-serif font-medium">
+                            R$ {proc.price?.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                           </td>
-                          <td className="py-3.5 px-4 font-semibold text-stone-850 dark:text-stone-100">
-                            {record.description}
+                          <td className="py-4 font-light text-[11px] max-w-xs truncate" title={proc.description}>
+                            {proc.description}
                           </td>
-                          <td className="py-3.5 px-4">{record.category}</td>
-                          <td className="py-3.5 px-4">
-                            {record.type === "entrada" ? (
-                              <span className="inline-flex px-2 py-0.5 rounded bg-green-50 dark:bg-green-950/20 text-green-600 font-semibold uppercase text-[9px]">
-                                Entrada
-                              </span>
-                            ) : (
-                              <span className="inline-flex px-2 py-0.5 rounded bg-red-50 dark:bg-red-950/20 text-red-500 font-semibold uppercase text-[9px]">
-                                Saída
-                              </span>
-                            )}
-                          </td>
-                          <td
-                            className={`py-3.5 px-4 font-serif font-semibold text-xs ${
-                              record.type === "entrada"
-                                ? "text-green-600"
-                                : "text-red-500"
-                            }`}
-                          >
-                            {record.type === "entrada" ? "+" : "-"} R$ {record.value.toLocaleString("pt-BR")}
-                          </td>
-                          <td className="py-3.5 px-4">
+                          <td className="py-4">
                             <div className="flex items-center justify-center gap-2">
                               <button
-                                onClick={() => handleEditModal("financial", record)}
-                                className="p-1 text-stone-400 hover:text-gold-500 rounded cursor-pointer"
+                                onClick={() => handleOpenEditModal("procedure", proc.id)}
+                                className="p-1 text-stone-400 hover:text-stone-800 dark:hover:text-stone-200"
                               >
-                                <Edit size={13} />
+                                <Edit size={14} />
                               </button>
                               <button
-                                onClick={() => handleDeleteItem("financial", record.id)}
-                                className="p-1 text-stone-400 hover:text-red-500 rounded cursor-pointer"
+                                onClick={() => handleDeleteItem("procedure", proc.id)}
+                                className="p-1 text-stone-400 hover:text-red-500"
                               >
-                                <Trash2 size={13} />
+                                <Trash2 size={14} />
                               </button>
                             </div>
                           </td>
@@ -1134,297 +883,376 @@ export default function AdminPanel() {
                   </tbody>
                 </table>
               </div>
-            </div>
+            </motion.div>
           )}
 
-          {/* TAB 10: REPORTS EXPORTER */}
-          {activeTab === "relatorios" && (
-            <div className="flex flex-col gap-8">
-              <div className="bg-white dark:bg-stone-900 p-6 rounded-2xl border border-stone-200/40 dark:border-stone-800/40 shadow-sm">
-                <span className="text-xs text-stone-500 block font-light mb-6">
-                  Gere arquivos de auditoria prontos para impressão ou exportação.
-                </span>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                  {/* Report Card 1 */}
-                  <div className="p-5 rounded-2xl border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-950/20 flex flex-col gap-4">
-                    <h4 className="font-serif text-sm font-semibold text-stone-850 dark:text-stone-150">
-                      Clientes Cadastrados
-                    </h4>
-                    <p className="text-[10px] text-stone-500 leading-relaxed font-light flex-1">
-                      Exporta o cadastro completo contendo nomes, contatos, e-mails, aniversários e observações de prontuário de cada paciente ativo.
-                    </p>
-                    <button
-                      onClick={() => {
-                        alert("Auditoria gerada! Preparando impressão...");
-                        window.print();
-                      }}
-                      className="w-full py-2.5 bg-gradient-to-r from-gold-500 to-gold-400 text-white rounded-lg font-semibold uppercase tracking-wider text-[10px] cursor-pointer flex items-center justify-center gap-2"
-                    >
-                      <FileDown size={13} /> Gerar PDF / Imprimir
-                    </button>
-                  </div>
-
-                  {/* Report Card 2 */}
-                  <div className="p-5 rounded-2xl border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-950/20 flex flex-col gap-4">
-                    <h4 className="font-serif text-sm font-semibold text-stone-850 dark:text-stone-150">
-                      Agenda de Consultas
-                    </h4>
-                    <p className="text-[10px] text-stone-500 leading-relaxed font-light flex-1">
-                      Relatório completo de agendamentos futuros e passados, detalhado por data, profissional e procedimento associado.
-                    </p>
-                    <button
-                      onClick={() => {
-                        // Generate mock CSV data download
-                        const csvContent = "data:text/csv;charset=utf-8,ID,Cliente,Procedimento,Data,Hora,Valor\n" + 
-                          appointments.map(a => `"${a.id}","${a.clientName}","${a.procedureName}","${a.date}","${a.time}","${a.price}"`).join("\n");
-                        const encodedUri = encodeURI(csvContent);
-                        const link = document.createElement("a");
-                        link.setAttribute("href", encodedUri);
-                        link.setAttribute("download", "auditoria_agenda_luxe.csv");
-                        document.body.appendChild(link);
-                        link.click();
-                        success("Download Iniciado", "Planilha Excel (CSV) baixada com sucesso.");
-                      }}
-                      className="w-full py-2.5 bg-stone-900 dark:bg-stone-800 text-stone-200 rounded-lg font-semibold uppercase tracking-wider text-[10px] cursor-pointer flex items-center justify-center gap-2"
-                    >
-                      <FileDown size={13} /> Exportar Excel
-                    </button>
-                  </div>
-
-                  {/* Report Card 3 */}
-                  <div className="p-5 rounded-2xl border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-950/20 flex flex-col gap-4">
-                    <h4 className="font-serif text-sm font-semibold text-stone-850 dark:text-stone-150">
-                      Balanço Financeiro
-                    </h4>
-                    <p className="text-[10px] text-stone-500 leading-relaxed font-light flex-1">
-                      Consolidado de todas as entradas de procedimentos e saídas operacionais, contendo data, descrição e cálculo líquido de margem de lucro.
-                    </p>
-                    <button
-                      onClick={() => {
-                        alert("Auditoria gerada! Preparando impressão...");
-                        window.print();
-                      }}
-                      className="w-full py-2.5 bg-gradient-to-r from-gold-500 to-gold-400 text-white rounded-lg font-semibold uppercase tracking-wider text-[10px] cursor-pointer flex items-center justify-center gap-2"
-                    >
-                      <FileDown size={13} /> Gerar PDF / Imprimir
-                    </button>
-                  </div>
-                </div>
+          {/* TAB 6: DEPOIMENTOS */}
+          {activeTab === "depoimentos" && (
+            <motion.div
+              key="depoimentos"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className={`${cardStyleClass} p-6 rounded-2xl flex flex-col`}
+            >
+              <div className="flex justify-between items-center mb-6">
+                <span className="font-serif text-sm font-semibold text-stone-850 dark:text-stone-200">Depoimentos Moderação</span>
+                <button
+                  onClick={() => handleOpenAddModal("testimonial")}
+                  className={`px-4 py-2 bg-gold-500 hover:bg-gold-600 text-white font-semibold flex items-center gap-1.5 ${btnRadius} shadow-sm cursor-pointer`}
+                >
+                  <Plus size={14} /> Adicionar Depoimento
+                </button>
               </div>
-            </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {testimonials
+                  .filter((t) => t.name.toLowerCase().includes(globalSearch.toLowerCase()))
+                  .map((test) => (
+                    <div key={test.id} className="p-5 bg-stone-50 dark:bg-stone-950 rounded-xl border border-stone-150 dark:border-stone-850/60 flex flex-col justify-between gap-4">
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-0.5 text-gold-450">
+                            {Array.from({ length: test.rating }).map((_, i) => (
+                              <Star key={i} size={13} className="fill-gold-400 text-gold-400" />
+                            ))}
+                          </div>
+                          <span className="text-[9px] text-stone-400 font-light">{test.date}</span>
+                        </div>
+                        <p className="text-xs text-stone-500 dark:text-stone-400 italic font-light leading-relaxed">&ldquo;{test.comment}&rdquo;</p>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-3 border-t border-stone-200/50 dark:border-stone-800/40">
+                        <div className="flex items-center gap-3">
+                          <img src={test.photo} alt={test.name} className="w-8 h-8 rounded-full object-cover" />
+                          <div>
+                            <span className="font-semibold block leading-tight text-stone-800 dark:text-stone-200">{test.name}</span>
+                            <span className="text-[9px] text-stone-400 uppercase tracking-widest font-light block">{test.role}</span>
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() => handleDeleteItem("testimonial", test.id)}
+                          className="p-1.5 text-stone-400 hover:text-red-500 cursor-pointer"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </motion.div>
           )}
 
-          {/* TAB 11: CONFIGURATIONS */}
+          {/* TAB 7: CONFIGURAÇÕES (WHITE-LABEL CONTROL) */}
           {activeTab === "configuracoes" && (
-            <div className="bg-white dark:bg-stone-900 p-6 rounded-2xl border border-stone-200/40 dark:border-stone-800/40 shadow-sm max-w-2xl">
-              <form onSubmit={handleConfigSubmit} className="flex flex-col gap-6 font-sans text-xs">
-                
-                {/* Clinic base details */}
-                <div>
-                  <h3 className="font-serif text-sm font-semibold text-stone-850 dark:text-stone-150 mb-4 border-b pb-2">
-                    Dados Gerais da Clínica
-                  </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-1.5">
-                      <label className="font-medium text-stone-650 dark:text-stone-300">Nome da Clínica</label>
-                      <input
-                        type="text"
-                        value={configForm.name}
-                        onChange={(e) => setConfigForm({ ...configForm, name: e.target.value })}
-                        className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-lg outline-none"
-                      />
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                      <label className="font-medium text-stone-650 dark:text-stone-300">Slogan / Tagline</label>
-                      <input
-                        type="text"
-                        value={configForm.tagline}
-                        onChange={(e) => setConfigForm({ ...configForm, tagline: e.target.value })}
-                        className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-lg outline-none"
-                      />
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                      <label className="font-medium text-stone-650 dark:text-stone-300">Telefone Fixo</label>
-                      <input
-                        type="text"
-                        value={configForm.phone}
-                        onChange={(e) => setConfigForm({ ...configForm, phone: e.target.value })}
-                        className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-lg outline-none"
-                      />
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                      <label className="font-medium text-stone-650 dark:text-stone-300">WhatsApp Comercial</label>
-                      <input
-                        type="text"
-                        value={configForm.whatsapp}
-                        onChange={(e) => setConfigForm({ ...configForm, whatsapp: e.target.value })}
-                        className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-lg outline-none"
-                      />
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-1.5 mt-4">
-                    <label className="font-medium text-stone-650 dark:text-stone-300">Endereço Completo</label>
+            <motion.div
+              key="configuracoes"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className={`${cardStyleClass} p-6 rounded-2xl flex flex-col`}
+            >
+              <span className="font-serif text-sm font-semibold text-stone-850 dark:text-stone-200 mb-6 pb-2 border-b border-stone-200/50 dark:border-stone-800/40">
+                Dados Comerciais & Identidade
+              </span>
+
+              <form onSubmit={handleSaveConfig} className="flex flex-col gap-6 max-w-3xl">
+                {/* Basic info */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="flex flex-col gap-1.5">
+                    <label className="font-semibold text-stone-650 dark:text-stone-300">Nome da Clínica</label>
                     <input
                       type="text"
-                      value={configForm.address}
-                      onChange={(e) => setConfigForm({ ...configForm, address: e.target.value })}
-                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-lg outline-none"
+                      value={configForm.name}
+                      onChange={(e) => setConfigForm({ ...configForm, name: e.target.value })}
+                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 dark:text-white"
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-1.5">
+                    <label className="font-semibold text-stone-650 dark:text-stone-300">Slogan Tagline</label>
+                    <input
+                      type="text"
+                      value={configForm.slogan}
+                      onChange={(e) => setConfigForm({ ...configForm, slogan: e.target.value })}
+                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 dark:text-white"
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-1.5">
+                    <label className="font-semibold text-stone-650 dark:text-stone-300">Logo Text</label>
+                    <input
+                      type="text"
+                      value={configForm.logoText}
+                      onChange={(e) => setConfigForm({ ...configForm, logoText: e.target.value })}
+                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 dark:text-white"
                     />
                   </div>
                 </div>
 
-                {/* Social Networks */}
-                <div>
-                  <h3 className="font-serif text-sm font-semibold text-stone-850 dark:text-stone-150 mb-4 border-b pb-2">
-                    Redes Sociais & Integrações
-                  </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-1.5">
-                      <label className="font-medium text-stone-650 dark:text-stone-300">Instagram URL</label>
-                      <input
-                        type="text"
-                        value={configForm.instagram}
-                        onChange={(e) => setConfigForm({ ...configForm, instagram: e.target.value })}
-                        className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-lg outline-none"
-                      />
-                    </div>
-                    <div className="flex flex-col gap-1.5">
-                      <label className="font-medium text-stone-650 dark:text-stone-300">Google Analytics ID</label>
-                      <input
-                        type="text"
-                        value={configForm.googleAnalyticsId}
-                        onChange={(e) => setConfigForm({ ...configForm, googleAnalyticsId: e.target.value })}
-                        placeholder="G-XXXXXXXXXX"
-                        className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-lg outline-none"
-                      />
-                    </div>
+                {/* Contact data */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="flex flex-col gap-1.5">
+                    <label className="font-semibold text-stone-650 dark:text-stone-300">Telefone Fixo</label>
+                    <input
+                      type="text"
+                      value={configForm.phone}
+                      onChange={(e) => setConfigForm({ ...configForm, phone: e.target.value })}
+                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 dark:text-white"
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-1.5">
+                    <label className="font-semibold text-stone-650 dark:text-stone-300">WhatsApp</label>
+                    <input
+                      type="text"
+                      value={configForm.whatsapp}
+                      onChange={(e) => setConfigForm({ ...configForm, whatsapp: e.target.value })}
+                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 dark:text-white"
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-1.5">
+                    <label className="font-semibold text-stone-650 dark:text-stone-300">E-mail Comercial</label>
+                    <input
+                      type="email"
+                      value={configForm.email}
+                      onChange={(e) => setConfigForm({ ...configForm, email: e.target.value })}
+                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 dark:text-white"
+                    />
                   </div>
                 </div>
 
-                {/* Submit button */}
+                {/* Address & Google Maps */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="font-semibold text-stone-650 dark:text-stone-300">Endereço Comercial Completo</label>
+                  <input
+                    type="text"
+                    value={configForm.address}
+                    onChange={(e) => setConfigForm({ ...configForm, address: e.target.value })}
+                    className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 dark:text-white"
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1.5">
+                  <label className="font-semibold text-stone-650 dark:text-stone-300">Google Maps Iframe URL</label>
+                  <input
+                    type="text"
+                    value={configForm.googleMapsUrl}
+                    onChange={(e) => setConfigForm({ ...configForm, googleMapsUrl: e.target.value })}
+                    className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 dark:text-white"
+                  />
+                </div>
+
+                {/* Working hours */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="flex flex-col gap-1.5">
+                    <label className="font-semibold text-stone-650 dark:text-stone-300">Horários (Segunda a Sexta)</label>
+                    <input
+                      type="text"
+                      value={configForm.workingHours.weekdays}
+                      onChange={(e) =>
+                        setConfigForm({
+                          ...configForm,
+                          workingHours: { ...configForm.workingHours, weekdays: e.target.value },
+                        })
+                      }
+                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 dark:text-white"
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-1.5">
+                    <label className="font-semibold text-stone-650 dark:text-stone-300">Horários (Sábado)</label>
+                    <input
+                      type="text"
+                      value={configForm.workingHours.saturday}
+                      onChange={(e) =>
+                        setConfigForm({
+                          ...configForm,
+                          workingHours: { ...configForm.workingHours, saturday: e.target.value },
+                        })
+                      }
+                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 dark:text-white"
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-1.5">
+                    <label className="font-semibold text-stone-650 dark:text-stone-300">Horários (Domingo)</label>
+                    <input
+                      type="text"
+                      value={configForm.workingHours.sunday}
+                      onChange={(e) =>
+                        setConfigForm({
+                          ...configForm,
+                          workingHours: { ...configForm.workingHours, sunday: e.target.value },
+                        })
+                      }
+                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 dark:text-white"
+                    />
+                  </div>
+                </div>
+
+                {/* SEO Configurations */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="flex flex-col gap-1.5">
+                    <label className="font-semibold text-stone-650 dark:text-stone-300">Título SEO Principal</label>
+                    <input
+                      type="text"
+                      value={configForm.seo.title}
+                      onChange={(e) =>
+                        setConfigForm({
+                          ...configForm,
+                          seo: { ...configForm.seo, title: e.target.value },
+                        })
+                      }
+                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 dark:text-white"
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-1.5">
+                    <label className="font-semibold text-stone-650 dark:text-stone-300">Meta Descrição SEO</label>
+                    <input
+                      type="text"
+                      value={configForm.seo.description}
+                      onChange={(e) =>
+                        setConfigForm({
+                          ...configForm,
+                          seo: { ...configForm.seo, description: e.target.value },
+                        })
+                      }
+                      className="w-full p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-850 rounded-xl outline-none focus:border-gold-450 dark:text-white"
+                    />
+                  </div>
+                </div>
+
                 <button
                   type="submit"
-                  className="py-3 bg-gradient-to-r from-gold-500 to-gold-400 text-white rounded-lg font-semibold uppercase tracking-wider text-center shadow-md cursor-pointer mt-4"
+                  className={`mt-4 py-3 bg-gold-500 hover:bg-gold-600 text-white font-semibold flex items-center justify-center gap-2 ${btnRadius} shadow-md cursor-pointer`}
                 >
-                  Salvar Alterações
+                  <Save size={14} /> Salvar Configurações
                 </button>
               </form>
-            </div>
+            </motion.div>
           )}
-
-        </div>
+        </AnimatePresence>
       </main>
 
-      {/* GLOBAL DYNAMIC OVERLAY MODAL FOR CRUD */}
+      {/* CRUD Overlay Dialog Modal */}
       <AnimatePresence>
         {isModalOpen && modalType && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 bg-stone-950/60 backdrop-blur-sm flex items-center justify-center p-4"
           >
             <motion.div
               initial={{ scale: 0.95, y: 15 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.95, y: 15 }}
-              className="bg-white dark:bg-stone-900 rounded-2xl border border-stone-200 dark:border-stone-800 max-w-xl w-full p-6 text-stone-800 dark:text-stone-100 font-sans"
+              className="bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-3xl shadow-2xl p-6 w-full max-w-lg text-stone-800 dark:text-stone-100 max-h-[90vh] overflow-y-auto"
             >
-              <h3 className="font-serif text-sm font-semibold tracking-wider border-b pb-3 mb-4 uppercase">
-                {editId ? "Editar Cadastro" : "Criar Novo Registro"} - {modalType}
-              </h3>
+              <div className="flex items-center justify-between pb-3 border-b border-stone-100 dark:border-stone-800/40 mb-6">
+                <h3 className="font-serif text-lg font-semibold capitalize">
+                  {editId ? "Editar" : "Adicionar"} {modalType === "beforeAfter" ? "Antes e Depois" : modalType}
+                </h3>
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="p-1 rounded-full hover:bg-stone-100 dark:hover:bg-stone-850 text-stone-400"
+                >
+                  <XCircle size={18} />
+                </button>
+              </div>
 
-              <form onSubmit={handleSaveSubmit} className="flex flex-col gap-4 text-xs">
+              <form onSubmit={handleModalSubmit} className="flex flex-col gap-4 font-sans text-xs">
                 
-                {/* 1. Client form */}
+                {/* Client fields */}
                 {modalType === "client" && (
                   <div className="flex flex-col gap-3">
-                    <div className="flex flex-col gap-1">
-                      <label className="font-medium text-stone-650 dark:text-stone-300">Nome</label>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="font-semibold">Nome Completo</label>
                       <input
                         type="text"
                         required
                         value={clientForm.name}
                         onChange={(e) => setClientForm({ ...clientForm, name: e.target.value })}
-                        className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
+                        className="p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
-                      <div className="flex flex-col gap-1">
-                        <label className="font-medium text-stone-650 dark:text-stone-300">Telefone</label>
+                      <div className="flex flex-col gap-1.5">
+                        <label className="font-semibold">Telefone</label>
                         <input
                           type="text"
                           required
                           value={clientForm.phone}
                           onChange={(e) => setClientForm({ ...clientForm, phone: e.target.value })}
-                          className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
+                          className="p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450"
                         />
                       </div>
-                      <div className="flex flex-col gap-1">
-                        <label className="font-medium text-stone-650 dark:text-stone-300">WhatsApp</label>
+                      <div className="flex flex-col gap-1.5">
+                        <label className="font-semibold">WhatsApp</label>
                         <input
                           type="text"
                           required
                           value={clientForm.whatsapp}
                           onChange={(e) => setClientForm({ ...clientForm, whatsapp: e.target.value })}
-                          className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
+                          className="p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450"
                         />
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="flex flex-col gap-1">
-                        <label className="font-medium text-stone-650 dark:text-stone-300">E-mail</label>
-                        <input
-                          type="email"
-                          required
-                          value={clientForm.email}
-                          onChange={(e) => setClientForm({ ...clientForm, email: e.target.value })}
-                          className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
-                        />
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <label className="font-medium text-stone-650 dark:text-stone-300">Nascimento</label>
-                        <input
-                          type="date"
-                          value={clientForm.birthDate}
-                          onChange={(e) => setClientForm({ ...clientForm, birthDate: e.target.value })}
-                          className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
-                        />
-                      </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="font-semibold">E-mail</label>
+                      <input
+                        type="email"
+                        required
+                        value={clientForm.email}
+                        onChange={(e) => setClientForm({ ...clientForm, email: e.target.value })}
+                        className="p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450"
+                      />
                     </div>
-                    <div className="flex flex-col gap-1">
-                      <label className="font-medium text-stone-650 dark:text-stone-300">Observações</label>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="font-semibold">Data de Nascimento</label>
+                      <input
+                        type="date"
+                        value={clientForm.birthDate}
+                        onChange={(e) => setClientForm({ ...clientForm, birthDate: e.target.value })}
+                        className="p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="font-semibold">Observações Clínicas / Prontuário</label>
                       <textarea
                         rows={3}
                         value={clientForm.observations}
                         onChange={(e) => setClientForm({ ...clientForm, observations: e.target.value })}
-                        className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none resize-none"
+                        className="p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450 resize-none"
                       />
                     </div>
                   </div>
                 )}
 
-                {/* 2. Procedure Form */}
+                {/* Procedure fields */}
                 {modalType === "procedure" && (
                   <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-1.5">
+                      <label className="font-semibold">Nome do Procedimento</label>
+                      <input
+                        type="text"
+                        required
+                        value={procForm.name}
+                        onChange={(e) => setProcForm({ ...procForm, name: e.target.value })}
+                        className="p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450"
+                      />
+                    </div>
                     <div className="grid grid-cols-2 gap-3">
-                      <div className="flex flex-col gap-1">
-                        <label className="font-medium text-stone-650 dark:text-stone-300">Nome</label>
-                        <input
-                          type="text"
-                          required
-                          value={procForm.name}
-                          onChange={(e) => setProcForm({ ...procForm, name: e.target.value })}
-                          className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
-                        />
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <label className="font-medium text-stone-650 dark:text-stone-300">Categoria</label>
+                      <div className="flex flex-col gap-1.5">
+                        <label className="font-semibold">Categoria</label>
                         <select
                           value={procForm.category}
-                          onChange={(e) => setProcForm({ ...procForm, category: e.target.value as any })}
-                          className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
+                          onChange={(e) => setProcForm({ ...procForm, category: e.target.value })}
+                          className="p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450 text-stone-800 dark:text-stone-300"
                         >
                           <option value="facial">Facial</option>
                           <option value="corporal">Corporal</option>
@@ -1432,340 +1260,316 @@ export default function AdminPanel() {
                           <option value="avancada">Avançada</option>
                         </select>
                       </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="flex flex-col gap-1">
-                        <label className="font-medium text-stone-650 dark:text-stone-300">Duração (min)</label>
+                      <div className="flex flex-col gap-1.5">
+                        <label className="font-semibold">Duração (minutos)</label>
                         <input
                           type="number"
                           required
                           value={procForm.duration}
                           onChange={(e) => setProcForm({ ...procForm, duration: Number(e.target.value) })}
-                          className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
-                        />
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <label className="font-medium text-stone-650 dark:text-stone-300">Valor (R$)</label>
-                        <input
-                          type="number"
-                          required
-                          value={procForm.price}
-                          onChange={(e) => setProcForm({ ...procForm, price: Number(e.target.value) })}
-                          className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
+                          className="p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450"
                         />
                       </div>
                     </div>
-                    <div className="flex flex-col gap-1">
-                      <label className="font-medium text-stone-650 dark:text-stone-300">Descrição</label>
-                      <textarea
-                        rows={2}
-                        value={procForm.description}
-                        onChange={(e) => setProcForm({ ...procForm, description: e.target.value })}
-                        className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none resize-none"
+                    <div className="flex flex-col gap-1.5">
+                      <label className="font-semibold">Preço Inicial (R$)</label>
+                      <input
+                        type="number"
+                        required
+                        value={procForm.price}
+                        onChange={(e) => setProcForm({ ...procForm, price: Number(e.target.value) })}
+                        className="p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450"
                       />
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="flex flex-col gap-1">
-                        <label className="font-medium text-stone-650 dark:text-stone-300">Benefícios (sep. por vírgula)</label>
-                        <input
-                          type="text"
-                          value={procForm.benefits}
-                          onChange={(e) => setProcForm({ ...procForm, benefits: e.target.value })}
-                          className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
-                        />
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <label className="font-medium text-stone-650 dark:text-stone-300">Contraindicações (sep. por vírgula)</label>
-                        <input
-                          type="text"
-                          value={procForm.contraindications}
-                          onChange={(e) => setProcForm({ ...procForm, contraindications: e.target.value })}
-                          className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
-                        />
-                      </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="font-semibold">Descrição</label>
+                      <textarea
+                        rows={3}
+                        required
+                        value={procForm.description}
+                        onChange={(e) => setProcForm({ ...procForm, description: e.target.value })}
+                        className="p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450 resize-none"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="font-semibold">Benefícios (Separados por vírgula)</label>
+                      <input
+                        type="text"
+                        value={procForm.benefits}
+                        onChange={(e) => setProcForm({ ...procForm, benefits: e.target.value })}
+                        placeholder="Ex: Estimula colágeno, Clareia manchas"
+                        className="p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="font-semibold">Contraindicações (Separadas por vírgula)</label>
+                      <input
+                        type="text"
+                        value={procForm.contraindications}
+                        onChange={(e) => setProcForm({ ...procForm, contraindications: e.target.value })}
+                        placeholder="Ex: Gestantes, Infecções ativas"
+                        className="p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450"
+                      />
                     </div>
                   </div>
                 )}
 
-                {/* 3. Appointment Form */}
+                {/* Appointment fields */}
                 {modalType === "appointment" && (
                   <div className="flex flex-col gap-3">
-                    <div className="flex flex-col gap-1">
-                      <label className="font-medium text-stone-650 dark:text-stone-300">Paciente</label>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="font-semibold">Paciente (Selecione)</label>
                       <select
-                        required
                         value={apptForm.clientId}
-                        onChange={(e) => setApptForm({ ...apptForm, clientId: e.target.value })}
-                        className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
+                        onChange={(e) => {
+                          const client = clients.find(c => c.id === e.target.value);
+                          setApptForm({
+                            ...apptForm,
+                            clientId: e.target.value,
+                            clientName: client?.name || "",
+                            clientPhone: client?.phone || "",
+                          });
+                        }}
+                        className="p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450 text-stone-805 dark:text-stone-300"
                       >
-                        <option value="">Selecione o Cliente</option>
+                        <option value="">Selecione um paciente...</option>
                         {clients.map((c) => (
-                          <option key={c.id} value={c.id}>
-                            {c.name} ({c.phone})
-                          </option>
+                          <option key={c.id} value={c.id}>{c.name}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {!apptForm.clientId && (
+                      <div className="grid grid-cols-2 gap-3 border p-3 rounded-xl bg-stone-50 dark:bg-stone-950 border-stone-200 dark:border-stone-800">
+                        <div className="flex flex-col gap-1.5">
+                          <label className="font-semibold">Nome Manual</label>
+                          <input
+                            type="text"
+                            value={apptForm.clientName}
+                            onChange={(e) => setApptForm({ ...apptForm, clientName: e.target.value })}
+                            className="p-2 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-lg"
+                          />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                          <label className="font-semibold">Telefone Manual</label>
+                          <input
+                            type="text"
+                            value={apptForm.clientPhone}
+                            onChange={(e) => setApptForm({ ...apptForm, clientPhone: e.target.value })}
+                            className="p-2 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-lg"
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="flex flex-col gap-1.5">
+                      <label className="font-semibold">Procedimento</label>
+                      <select
+                        value={apptForm.procedureId}
+                        onChange={(e) => {
+                          const proc = procedures.find(p => p.id === e.target.value);
+                          setApptForm({
+                            ...apptForm,
+                            procedureId: e.target.value,
+                            price: proc?.price || 0,
+                          });
+                        }}
+                        className="p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450 text-stone-805 dark:text-stone-300"
+                      >
+                        <option value="">Selecione um procedimento...</option>
+                        {procedures.map((p) => (
+                          <option key={p.id} value={p.id}>{p.name} (R$ {p.price})</option>
                         ))}
                       </select>
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
-                      <div className="flex flex-col gap-1">
-                        <label className="font-medium text-stone-650 dark:text-stone-300">Procedimento</label>
-                        <select
-                          required
-                          value={apptForm.procedureId}
-                          onChange={(e) => setApptForm({ ...apptForm, procedureId: e.target.value })}
-                          className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
-                        >
-                          <option value="">Selecione o Procedimento</option>
-                          {procedures.map((p) => (
-                            <option key={p.id} value={p.id}>
-                              {p.name} (R$ {p.price})
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <label className="font-medium text-stone-650 dark:text-stone-300">Especialista</label>
-                        <select
-                          required
-                          value={apptForm.professionalId}
-                          onChange={(e) => setApptForm({ ...apptForm, professionalId: e.target.value })}
-                          className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
-                        >
-                          <option value="">Selecione o Profissional</option>
-                          {professionals.map((pr) => (
-                            <option key={pr.id} value={pr.id}>
-                              {pr.name} ({pr.role})
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="flex flex-col gap-1">
-                        <label className="font-medium text-stone-650 dark:text-stone-300">Data</label>
+                      <div className="flex flex-col gap-1.5">
+                        <label className="font-semibold">Data</label>
                         <input
                           type="date"
                           required
                           value={apptForm.date}
                           onChange={(e) => setApptForm({ ...apptForm, date: e.target.value })}
-                          className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
+                          className="p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450"
                         />
                       </div>
-                      <div className="flex flex-col gap-1">
-                        <label className="font-medium text-stone-650 dark:text-stone-300">Horário</label>
+                      <div className="flex flex-col gap-1.5">
+                        <label className="font-semibold">Horário</label>
                         <input
                           type="text"
                           required
                           placeholder="Ex: 14:00"
                           value={apptForm.time}
                           onChange={(e) => setApptForm({ ...apptForm, time: e.target.value })}
-                          className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
+                          className="p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450"
                         />
                       </div>
                     </div>
-                    <div className="flex flex-col gap-1">
-                      <label className="font-medium text-stone-650 dark:text-stone-300">Notas Adicionais</label>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="flex flex-col gap-1.5">
+                        <label className="font-semibold">Preço Cobrado (R$)</label>
+                        <input
+                          type="number"
+                          value={apptForm.price}
+                          onChange={(e) => setApptForm({ ...apptForm, price: Number(e.target.value) })}
+                          className="p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-1.5">
+                        <label className="font-semibold">Status</label>
+                        <select
+                          value={apptForm.status}
+                          onChange={(e) => setApptForm({ ...apptForm, status: e.target.value as any })}
+                          className="p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450 text-stone-805 dark:text-stone-300"
+                        >
+                          <option value="confirmado">Confirmado</option>
+                          <option value="pendente">Pendente</option>
+                          <option value="cancelado">Cancelado</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col gap-1.5">
+                      <label className="font-semibold">Observações do Agendamento</label>
                       <textarea
                         rows={2}
                         value={apptForm.notes}
                         onChange={(e) => setApptForm({ ...apptForm, notes: e.target.value })}
-                        className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none resize-none"
+                        className="p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450 resize-none"
                       />
                     </div>
                   </div>
                 )}
 
-                {/* 4. Professional Form */}
-                {modalType === "professional" && (
-                  <div className="flex flex-col gap-3">
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="flex flex-col gap-1">
-                        <label className="font-medium text-stone-650 dark:text-stone-300">Nome</label>
-                        <input
-                          type="text"
-                          required
-                          value={profForm.name}
-                          onChange={(e) => setProfForm({ ...profForm, name: e.target.value })}
-                          className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
-                        />
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <label className="font-medium text-stone-650 dark:text-stone-300">Cargo / Função</label>
-                        <input
-                          type="text"
-                          required
-                          value={profForm.role}
-                          onChange={(e) => setProfForm({ ...profForm, role: e.target.value })}
-                          className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
-                        />
-                      </div>
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <label className="font-medium text-stone-650 dark:text-stone-300">Especialidade Principal</label>
-                      <input
-                        type="text"
-                        required
-                        value={profForm.specialty}
-                        onChange={(e) => setProfForm({ ...profForm, specialty: e.target.value })}
-                        className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
-                      />
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <label className="font-medium text-stone-650 dark:text-stone-300">Biografia Curta</label>
-                      <textarea
-                        rows={2}
-                        value={profForm.bio}
-                        onChange={(e) => setProfForm({ ...profForm, bio: e.target.value })}
-                        className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none resize-none"
-                      />
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <label className="font-medium text-stone-650 dark:text-stone-300">Horários (sep. por vírgula)</label>
-                      <input
-                        type="text"
-                        required
-                        value={profForm.hours}
-                        onChange={(e) => setProfForm({ ...profForm, hours: e.target.value })}
-                        className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {/* 5. Gallery Form */}
+                {/* Gallery photo fields */}
                 {modalType === "gallery" && (
                   <div className="flex flex-col gap-3">
-                    <div className="flex flex-col gap-1">
-                      <label className="font-medium text-stone-650 dark:text-stone-300">Título da Foto</label>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="font-semibold">Título da Foto</label>
                       <input
                         type="text"
                         required
                         value={galForm.title}
                         onChange={(e) => setGalForm({ ...galForm, title: e.target.value })}
-                        className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
+                        className="p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450"
                       />
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="flex flex-col gap-1">
-                        <label className="font-medium text-stone-650 dark:text-stone-300">Categoria</label>
-                        <select
-                          value={galForm.category}
-                          onChange={(e) => setGalForm({ ...galForm, category: e.target.value as any })}
-                          className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
-                        >
-                          <option value="facial">Facial</option>
-                          <option value="corporal">Corporal</option>
-                          <option value="laser">Laser</option>
-                          <option value="avancada">Avançada</option>
-                          <option value="clinica">A Clínica</option>
-                        </select>
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <label className="font-medium text-stone-650 dark:text-stone-300">URL da Imagem</label>
-                        <input
-                          type="text"
-                          required
-                          value={galForm.image}
-                          onChange={(e) => setGalForm({ ...galForm, image: e.target.value })}
-                          className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
-                        />
-                      </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="font-semibold">Categoria</label>
+                      <select
+                        value={galForm.category}
+                        onChange={(e) => setGalForm({ ...galForm, category: e.target.value })}
+                        className="p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450 text-stone-800 dark:text-stone-350"
+                      >
+                        <option value="facial">Facial</option>
+                        <option value="corporal">Corporal</option>
+                        <option value="laser">Laser</option>
+                        <option value="clinica">A Clínica</option>
+                      </select>
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="font-semibold">Image URL (Unsplash ou Firebase)</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="https://..."
+                        value={galForm.image}
+                        onChange={(e) => setGalForm({ ...galForm, image: e.target.value })}
+                        className="p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450"
+                      />
                     </div>
                   </div>
                 )}
 
-                {/* 6. Before After Form */}
+                {/* Before After fields */}
                 {modalType === "beforeAfter" && (
                   <div className="flex flex-col gap-3">
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="flex flex-col gap-1">
-                        <label className="font-medium text-stone-650 dark:text-stone-300">Título</label>
-                        <input
-                          type="text"
-                          required
-                          value={baForm.title}
-                          onChange={(e) => setBaForm({ ...baForm, title: e.target.value })}
-                          className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
-                        />
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <label className="font-medium text-stone-650 dark:text-stone-300">Categoria</label>
-                        <select
-                          value={baForm.category}
-                          onChange={(e) => setBaForm({ ...baForm, category: e.target.value as any })}
-                          className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
-                        >
-                          <option value="facial">Facial</option>
-                          <option value="corporal">Corporal</option>
-                          <option value="laser">Laser</option>
-                          <option value="avancada">Avançada</option>
-                        </select>
-                      </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="font-semibold">Título do Caso</label>
+                      <input
+                        type="text"
+                        required
+                        value={baForm.title}
+                        onChange={(e) => setBaForm({ ...baForm, title: e.target.value })}
+                        className="p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="font-semibold">Categoria</label>
+                      <select
+                        value={baForm.category}
+                        onChange={(e) => setBaForm({ ...baForm, category: e.target.value })}
+                        className="p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450 text-stone-800 dark:text-stone-350"
+                      >
+                        <option value="facial">Facial</option>
+                        <option value="corporal">Corporal</option>
+                        <option value="laser">Laser</option>
+                        <option value="avancada">Avançada</option>
+                      </select>
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="font-semibold">Descrição do Caso</label>
+                      <textarea
+                        rows={2}
+                        value={baForm.description}
+                        onChange={(e) => setBaForm({ ...baForm, description: e.target.value })}
+                        className="p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-gold-450 resize-none"
+                      />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
-                      <div className="flex flex-col gap-1">
-                        <label className="font-medium text-stone-650 dark:text-stone-300">URL Imagem Antes</label>
+                      <div className="flex flex-col gap-1.5">
+                        <label className="font-semibold">Antes (Image URL)</label>
                         <input
                           type="text"
                           required
                           value={baForm.beforeImage}
                           onChange={(e) => setBaForm({ ...baForm, beforeImage: e.target.value })}
-                          className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
+                          className="p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none"
                         />
                       </div>
-                      <div className="flex flex-col gap-1">
-                        <label className="font-medium text-stone-650 dark:text-stone-300">URL Imagem Depois</label>
+                      <div className="flex flex-col gap-1.5">
+                        <label className="font-semibold">Depois (Image URL)</label>
                         <input
                           type="text"
                           required
                           value={baForm.afterImage}
                           onChange={(e) => setBaForm({ ...baForm, afterImage: e.target.value })}
-                          className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
+                          className="p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none"
                         />
                       </div>
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <label className="font-medium text-stone-650 dark:text-stone-300">Legenda / Resultado</label>
-                      <textarea
-                        rows={2}
-                        value={baForm.description}
-                        onChange={(e) => setBaForm({ ...baForm, description: e.target.value })}
-                        className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none resize-none"
-                      />
                     </div>
                   </div>
                 )}
 
-                {/* 7. Testimonial Form */}
+                {/* Testimonial fields */}
                 {modalType === "testimonial" && (
                   <div className="flex flex-col gap-3">
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="flex flex-col gap-1">
-                        <label className="font-medium text-stone-650 dark:text-stone-300">Nome</label>
-                        <input
-                          type="text"
-                          required
-                          value={testForm.name}
-                          onChange={(e) => setTestForm({ ...testForm, name: e.target.value })}
-                          className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
-                        />
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <label className="font-medium text-stone-650 dark:text-stone-300">Cargo / Função</label>
-                        <input
-                          type="text"
-                          required
-                          value={testForm.role}
-                          onChange={(e) => setTestForm({ ...testForm, role: e.target.value })}
-                          className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
-                        />
-                      </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="font-semibold">Nome da Paciente</label>
+                      <input
+                        type="text"
+                        required
+                        value={testForm.name}
+                        onChange={(e) => setTestForm({ ...testForm, name: e.target.value })}
+                        className="p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="font-semibold">Ocupação / Cargo</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="Ex: Advogada"
+                        value={testForm.role}
+                        onChange={(e) => setTestForm({ ...testForm, role: e.target.value })}
+                        className="p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none"
+                      />
                     </div>
                     <div className="grid grid-cols-2 gap-3">
-                      <div className="flex flex-col gap-1">
-                        <label className="font-medium text-stone-650 dark:text-stone-300">Nota (1-5)</label>
+                      <div className="flex flex-col gap-1.5">
+                        <label className="font-semibold">Nota (1 a 5)</label>
                         <input
                           type="number"
                           min={1}
@@ -1773,117 +1577,43 @@ export default function AdminPanel() {
                           required
                           value={testForm.rating}
                           onChange={(e) => setTestForm({ ...testForm, rating: Number(e.target.value) })}
-                          className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
+                          className="p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none"
                         />
                       </div>
-                      <div className="flex flex-col gap-1">
-                        <label className="font-medium text-stone-650 dark:text-stone-300">Foto URL</label>
+                      <div className="flex flex-col gap-1.5">
+                        <label className="font-semibold">Foto URL (Opcional)</label>
                         <input
                           type="text"
-                          required
                           value={testForm.photo}
                           onChange={(e) => setTestForm({ ...testForm, photo: e.target.value })}
-                          className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
+                          className="p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none"
                         />
                       </div>
                     </div>
-                    <div className="flex flex-col gap-1">
-                      <label className="font-medium text-stone-650 dark:text-stone-300">Comentário</label>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="font-semibold">Comentário / Relato</label>
                       <textarea
                         rows={3}
                         required
                         value={testForm.comment}
                         onChange={(e) => setTestForm({ ...testForm, comment: e.target.value })}
-                        className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none resize-none"
+                        className="p-2.5 bg-stone-50 dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-xl outline-none resize-none"
                       />
                     </div>
                   </div>
                 )}
 
-                {/* 8. Financial Form */}
-                {modalType === "financial" && (
-                  <div className="flex flex-col gap-3">
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="flex flex-col gap-1">
-                        <label className="font-medium text-stone-650 dark:text-stone-300">Tipo</label>
-                        <select
-                          value={finForm.type}
-                          onChange={(e) => setFinForm({ ...finForm, type: e.target.value as any })}
-                          className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
-                        >
-                          <option value="entrada">Entrada (Faturamento)</option>
-                          <option value="saida">Saída (Despesa)</option>
-                        </select>
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <label className="font-medium text-stone-650 dark:text-stone-300">Valor (R$)</label>
-                        <input
-                          type="number"
-                          required
-                          value={finForm.value}
-                          onChange={(e) => setFinForm({ ...finForm, value: Number(e.target.value) })}
-                          className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
-                        />
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="flex flex-col gap-1">
-                        <label className="font-medium text-stone-650 dark:text-stone-300">Data</label>
-                        <input
-                          type="date"
-                          required
-                          value={finForm.date}
-                          onChange={(e) => setFinForm({ ...finForm, date: e.target.value })}
-                          className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
-                        />
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <label className="font-medium text-stone-650 dark:text-stone-300">Categoria</label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="Ex: Marketing, Insumos, Procedimentos"
-                          value={finForm.category}
-                          onChange={(e) => setFinForm({ ...finForm, category: e.target.value })}
-                          className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
-                        />
-                      </div>
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <label className="font-medium text-stone-650 dark:text-stone-300">Descrição / Justificativa</label>
-                      <input
-                        type="text"
-                        required
-                        value={finForm.description}
-                        onChange={(e) => setFinForm({ ...finForm, description: e.target.value })}
-                        className="p-2 border rounded-lg bg-stone-50 dark:bg-stone-950 dark:border-stone-800 outline-none"
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {/* Footer buttons */}
-                <div className="flex gap-3 justify-end pt-4 border-t mt-4 border-stone-200 dark:border-stone-800">
-                  <button
-                    type="button"
-                    onClick={() => setIsModalOpen(false)}
-                    className="px-4 py-2 border rounded-lg text-stone-500 hover:bg-stone-50 cursor-pointer"
-                  >
-                    Cancelar
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-5 py-2 bg-gradient-to-r from-gold-500 to-gold-400 text-white rounded-lg font-semibold cursor-pointer"
-                  >
-                    Salvar Registro
-                  </button>
-                </div>
+                <button
+                  type="submit"
+                  className={`mt-4 py-3 bg-gold-500 hover:bg-gold-600 text-white font-semibold flex items-center justify-center gap-1.5 ${btnRadius} shadow-md cursor-pointer`}
+                >
+                  <CheckCircle size={14} /> Salvar Item
+                </button>
               </form>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
-
     </div>
   );
 }

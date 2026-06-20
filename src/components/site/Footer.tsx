@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Phone, Mail, MapPin, ShieldAlert } from "lucide-react";
-import { useDatabase } from "@/context/DatabaseContext";
+import { clinicConfig } from "@/config/clinic-config";
 
 const Instagram: React.FC<{ size?: number }> = ({ size = 16 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -29,32 +29,30 @@ const Youtube: React.FC<{ size?: number }> = ({ size = 16 }) => (
 
 export const Footer: React.FC = () => {
   const pathname = usePathname();
-  const { clinicConfig } = useDatabase();
 
   // Hide footer on admin routes
   if (pathname?.startsWith("/admin")) return null;
 
   return (
-    <footer className="bg-stone-100 dark:bg-stone-900 border-t border-stone-200/60 dark:border-stone-800/60 transition-colors">
+    <footer className="bg-stone-105 dark:bg-stone-900 border-t border-stone-200/60 dark:border-stone-800/60 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Column 1: Clinic Identity */}
           <div className="flex flex-col gap-4">
             <Link href="/" className="flex flex-col select-none">
               <span className="font-serif text-xl tracking-[0.25em] uppercase text-stone-800 dark:text-stone-100 font-medium">
-                {clinicConfig.name || "Luxe Estética"}
+                {clinicConfig.name}
               </span>
               <span className="text-[9px] tracking-[0.2em] uppercase text-stone-500 dark:text-stone-400 font-light -mt-0.5">
                 Premium Concept
               </span>
             </Link>
             <p className="text-xs text-stone-500 dark:text-stone-400 leading-relaxed font-light">
-              {clinicConfig.tagline ||
-                "A arte de realçar sua beleza natural com exclusividade e tecnologia."}
+              {clinicConfig.slogan}
             </p>
             <div className="flex items-center gap-3 mt-2">
               <a
-                href={clinicConfig.instagram}
+                href={clinicConfig.social.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 rounded-full bg-white dark:bg-stone-800 border border-stone-200/50 dark:border-stone-700/50 text-stone-600 dark:text-stone-300 hover:text-gold-500 dark:hover:text-gold-400 hover:border-gold-300 transition-all shadow-sm"
@@ -62,7 +60,7 @@ export const Footer: React.FC = () => {
                 <Instagram size={14} />
               </a>
               <a
-                href={clinicConfig.facebook}
+                href={clinicConfig.social.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 rounded-full bg-white dark:bg-stone-800 border border-stone-200/50 dark:border-stone-700/50 text-stone-600 dark:text-stone-300 hover:text-gold-500 dark:hover:text-gold-400 hover:border-gold-300 transition-all shadow-sm"
@@ -70,7 +68,7 @@ export const Footer: React.FC = () => {
                 <Facebook size={14} />
               </a>
               <a
-                href={clinicConfig.youtube}
+                href={clinicConfig.social.youtube}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 rounded-full bg-white dark:bg-stone-800 border border-stone-200/50 dark:border-stone-700/50 text-stone-600 dark:text-stone-300 hover:text-gold-500 dark:hover:text-gold-400 hover:border-gold-300 transition-all shadow-sm"
@@ -116,19 +114,19 @@ export const Footer: React.FC = () => {
                 <span className="font-medium block text-stone-700 dark:text-stone-300">
                   Segunda a Sexta:
                 </span>
-                08:00 às 20:00
+                {clinicConfig.workingHours.weekdays}
               </li>
               <li>
                 <span className="font-medium block text-stone-700 dark:text-stone-300">
                   Sábado:
                 </span>
-                09:00 às 15:00
+                {clinicConfig.workingHours.saturday}
               </li>
               <li>
                 <span className="font-medium block text-stone-700 dark:text-stone-300">
                   Domingo:
                 </span>
-                Fechado
+                {clinicConfig.workingHours.sunday}
               </li>
             </ul>
           </div>
@@ -140,15 +138,15 @@ export const Footer: React.FC = () => {
             </h4>
             <ul className="flex flex-col gap-4 text-xs text-stone-500 dark:text-stone-400 font-light">
               <li className="flex gap-3">
-                <MapPin size={16} className="text-gold-500 shrink-0 mt-0.5" />
+                <MapPin size={16} className="text-gold-550 shrink-0 mt-0.5" />
                 <span>{clinicConfig.address}</span>
               </li>
               <li className="flex gap-3 items-center">
-                <Phone size={14} className="text-gold-500 shrink-0" />
+                <Phone size={14} className="text-gold-550 shrink-0" />
                 <span>{clinicConfig.phone}</span>
               </li>
               <li className="flex gap-3 items-center">
-                <Mail size={14} className="text-gold-500 shrink-0" />
+                <Mail size={14} className="text-gold-550 shrink-0" />
                 <span>{clinicConfig.email}</span>
               </li>
             </ul>
@@ -158,7 +156,7 @@ export const Footer: React.FC = () => {
         {/* Footer Bottom */}
         <div className="mt-16 pt-8 border-t border-stone-200/50 dark:border-stone-850/50 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-[10px] text-stone-400 dark:text-stone-550 font-light">
-            &copy; {new Date().getFullYear()} Luxe Estética Premium. Todos os direitos reservados.
+            &copy; {new Date().getFullYear()} {clinicConfig.name}. Todos os direitos reservados.
           </p>
           <div className="flex items-center gap-6">
             <Link

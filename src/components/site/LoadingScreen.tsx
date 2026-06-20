@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { clinicConfig } from "@/config/clinic-config";
 
 export const LoadingScreen: React.FC = () => {
   const [show, setShow] = useState(true);
@@ -31,7 +32,9 @@ export const LoadingScreen: React.FC = () => {
             >
               <div className="absolute inset-1 rounded-full border border-gold-400/30 animate-pulse" />
               <div className="absolute inset-3 rounded-full border border-gold-400/70 animate-ping opacity-15" />
-              <span className="font-serif text-3xl font-light tracking-[0.1em] text-gold-500 dark:text-gold-400">L</span>
+              <span className="font-serif text-3xl font-light tracking-[0.1em] text-gold-500 dark:text-gold-400">
+                {clinicConfig.logoText?.[0] || "L"}
+              </span>
             </motion.div>
 
             {/* Typography with letters breathing */}
@@ -41,16 +44,16 @@ export const LoadingScreen: React.FC = () => {
               transition={{ delay: 0.3, duration: 0.8 }}
               className="font-serif text-2xl tracking-[0.35em] uppercase text-stone-800 dark:text-stone-100"
             >
-              Luxe Estética
+              {clinicConfig.name}
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.6 }}
               transition={{ delay: 0.6, duration: 0.8 }}
-              className="mt-2 text-[10px] font-light tracking-[0.25em] uppercase text-stone-500 dark:text-stone-400"
+              className="mt-2 text-[10px] font-light tracking-[0.25em] uppercase text-stone-500 dark:text-stone-400 text-center max-w-xs"
             >
-              Estética Avançada Premium
+              {clinicConfig.slogan}
             </motion.p>
 
             {/* Micro progress indicator */}
