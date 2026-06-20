@@ -13,6 +13,7 @@ export const Header: React.FC = () => {
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const isHomeAndNotScrolled = pathname === "/" && !scrolled;
 
   // Sync theme
   useEffect(() => {
@@ -76,10 +77,18 @@ export const Header: React.FC = () => {
               />
             ) : (
               <div className="flex flex-col">
-                <span className="font-serif text-xl tracking-[0.25em] uppercase text-stone-950 dark:text-stone-100 font-medium">
+                <span className={`font-serif text-xl tracking-[0.25em] uppercase font-medium ${
+                  isHomeAndNotScrolled
+                    ? "text-white"
+                    : "text-primary dark:text-stone-100"
+                }`}>
                   {clinicConfig.logoText || clinicConfig.name}
                 </span>
-                <span className="text-[9px] tracking-[0.2em] uppercase text-stone-700 dark:text-stone-400 font-light -mt-0.5">
+                <span className={`text-[9px] tracking-[0.2em] uppercase font-light -mt-0.5 ${
+                  isHomeAndNotScrolled
+                    ? "text-white/70"
+                    : "text-stone-600 dark:text-stone-400"
+                }`}>
                   Premium Concept
                 </span>
               </div>
@@ -94,10 +103,14 @@ export const Header: React.FC = () => {
                 <Link
                   key={link.path}
                   href={link.path}
-                  className={`text-xs uppercase tracking-widest font-medium transition-colors hover:text-gold-500 dark:hover:text-gold-400 ${
-                    isActive
-                      ? "text-gold-500 dark:text-gold-400 font-semibold"
-                      : "text-stone-900 dark:text-stone-300"
+                  className={`text-xs uppercase tracking-widest font-medium transition-colors ${
+                    isHomeAndNotScrolled
+                      ? isActive
+                        ? "text-primary font-semibold"
+                        : "text-white/90 hover:text-primary"
+                      : isActive
+                      ? "text-primary font-semibold"
+                      : "text-stone-900 dark:text-stone-300 hover:text-primary"
                   }`}
                 >
                   {link.name}
@@ -111,7 +124,11 @@ export const Header: React.FC = () => {
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-full border border-stone-200 dark:border-stone-800 hover:border-gold-300 hover:text-gold-500 transition-all dark:text-stone-300 text-stone-600"
+              className={`p-2 rounded-full border transition-all ${
+                isHomeAndNotScrolled
+                  ? "border-white/20 text-white/90 hover:border-white hover:text-white"
+                  : "border-stone-200 dark:border-stone-800 text-stone-800 dark:text-stone-300 hover:border-primary hover:text-primary"
+              }`}
               aria-label="Toggle theme"
             >
               {theme === "light" ? <Moon size={16} /> : <Sun size={16} />}
@@ -132,7 +149,11 @@ export const Header: React.FC = () => {
             {/* Theme Toggle (Mobile) */}
             <button
               onClick={toggleTheme}
-              className="p-1.5 rounded-full border border-stone-200 dark:border-stone-800 text-stone-600 dark:text-stone-300"
+              className={`p-1.5 rounded-full border ${
+                isHomeAndNotScrolled
+                  ? "border-white/20 text-white/90"
+                  : "border-stone-200 dark:border-stone-800 text-stone-800 dark:text-stone-300"
+              }`}
             >
               {theme === "light" ? <Moon size={15} /> : <Sun size={15} />}
             </button>
@@ -140,7 +161,11 @@ export const Header: React.FC = () => {
             {/* Menu Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-1.5 rounded-md border border-stone-200 dark:border-stone-800 text-stone-800 dark:text-stone-100"
+              className={`p-1.5 rounded-md border ${
+                isHomeAndNotScrolled
+                  ? "border-white/20 text-white"
+                  : "border-stone-200 dark:border-stone-800 text-stone-800 dark:text-stone-100"
+              }`}
             >
               {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
