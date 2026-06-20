@@ -26,7 +26,25 @@ const getLocal = <T>(key: string, initial: T): T => {
     return initial;
   }
   try {
-    return JSON.parse(data) as T;
+    const parsed = JSON.parse(data);
+    if (Array.isArray(initial)) {
+      return parsed as T;
+    }
+    if (typeof initial === "object" && initial !== null) {
+      const merged = { ...initial, ...parsed };
+      // Deep merge nested fields specifically for clinicConfig to guarantee schema properties are present
+      if (key === "clinicConfig") {
+        const initConfig = initial as any;
+        const parsedConfig = parsed as any;
+        merged.seo = { ...initConfig.seo, ...parsedConfig.seo };
+        merged.about = { ...initConfig.about, ...parsedConfig.about };
+        merged.workingHours = { ...initConfig.workingHours, ...parsedConfig.workingHours };
+        merged.social = { ...initConfig.social, ...parsedConfig.social };
+        merged.integrations = { ...initConfig.integrations, ...parsedConfig.integrations };
+      }
+      return merged as T;
+    }
+    return parsed as T;
   } catch {
     return initial;
   }

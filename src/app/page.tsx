@@ -48,7 +48,7 @@ export default function Home() {
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-r from-stone-50/95 via-stone-50/80 to-transparent dark:from-stone-950/95 dark:via-stone-950/85 dark:to-transparent z-10" />
           <img
-            src={clinicConfig.heroImage || clinicConfig.seo.ogImage}
+            src={clinicConfig.heroImage || clinicConfig.seo?.ogImage || ""}
             alt="Recepção de luxo da clínica"
             className="w-full h-full object-cover object-center scale-105"
           />
